@@ -71,7 +71,7 @@ function AnalyticsMockup() {
                 <span className="font-medium text-ink">{t.label}</span>
                 <span className="font-semibold text-mute">{t.score}%</span>
               </div>
-              <ProgressBar value={t.score} thickness={5} delay={i * 0.1} color={t.score >= 85 ? '#10B981' : '#4F46E5'} />
+              <ProgressBar value={t.score} thickness={5} delay={i * 0.1} color={t.score >= 85 ? '#10B981' : '#1E88F5'} />
             </div>
           ))}
         </div>
@@ -277,7 +277,7 @@ export default function FeatureShowcase() {
     <section id="features" className="relative overflow-hidden bg-bone text-night">
       <Blob3D shape="torus" hex="#F97316" size={170} rotate={16} float className="absolute -left-10 top-24 hidden lg:block" />
       <Blob3D shape="droplet" hex="#A3E635" size={130} rotate={-12} float delay={1.5} className="absolute -right-6 bottom-24 hidden lg:block" />
-      <StarScribble color="#A855F7" size={90} className="absolute right-[8%] top-16 hidden opacity-80 xl:block" />
+      <StarScribble color="#1E88F5" size={90} className="absolute right-[8%] top-16 hidden opacity-80 xl:block" />
 
       <div className="relative mx-auto max-w-shell px-4 py-24 sm:px-6 lg:px-10 lg:py-32">
         <Reveal className="relative mx-auto max-w-2xl text-center">
@@ -286,7 +286,7 @@ export default function FeatureShowcase() {
             <span className="word-soft-dark">Built around</span> how a{' '}
             <span className="relative inline-block">
               school runs
-              <Scribble color="#A855F7" width={220} className="absolute -bottom-1 left-0 w-full" delay={0.5} />
+              <Scribble color="#1E88F5" width={220} className="absolute -bottom-1 left-0 w-full" delay={0.5} />
             </span>
           </h2>
           <p className="mt-9 text-base leading-8 text-night/50">

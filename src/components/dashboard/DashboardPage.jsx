@@ -35,7 +35,7 @@ export default function DashboardPage({ account, onExit }) {
     <div className="relative flex min-h-screen overflow-hidden bg-paper text-ink">
       {/* Ambient wash behind the frosted panels */}
       <div aria-hidden="true" className="pointer-events-none fixed inset-0">
-        <div className="aurora -left-32 top-0 h-[520px] w-[520px] animate-drift bg-grape/[0.10]" />
+        <div className="aurora -left-32 top-0 h-[520px] w-[520px] animate-drift bg-azure/[0.10]" />
         <div className="aurora right-[-10%] top-1/3 h-[460px] w-[460px] animate-drift-slow bg-aqua/[0.10]" />
         <div className="aurora bottom-[-10%] left-1/3 h-[420px] w-[420px] animate-drift bg-lime/[0.10]" />
       </div>

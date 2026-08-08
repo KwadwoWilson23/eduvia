@@ -1,5 +1,5 @@
-import { useRef } from 'react'
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion, useScroll, useTransform, useSpring } from 'framer-motion'
 
 /**
  * Motion primitives shared across the landing page — scroll reveals,
@@ -100,6 +100,43 @@ export function SplitWords({ text, className = '', delay = 0, wordClass = '' }) 
         </span>
       ))}
     </motion.span>
+  )
+}
+
+/* ------------------------------------------------------------------ *
+ * RotatingWord — cycles through words in place
+ * ------------------------------------------------------------------ */
+
+export function RotatingWord({ words, interval = 2200, className = '', colors = [] }) {
+  const [i, setI] = useState(0)
+
+  useEffect(() => {
+    const id = setInterval(() => setI((n) => (n + 1) % words.length), interval)
+    return () => clearInterval(id)
+  }, [words.length, interval])
+
+  // Reserve the width of the longest word so surrounding text never reflows.
+  const longest = words.reduce((a, b) => (b.length > a.length ? b : a), '')
+
+  return (
+    <span className={`relative inline-grid overflow-hidden align-bottom ${className}`}>
+      <span aria-hidden="true" className="invisible col-start-1 row-start-1 whitespace-nowrap">
+        {longest}
+      </span>
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={words[i]}
+          initial={{ y: '100%', opacity: 0 }}
+          animate={{ y: '0%', opacity: 1 }}
+          exit={{ y: '-100%', opacity: 0 }}
+          transition={{ duration: 0.5, ease: EASE }}
+          className="col-start-1 row-start-1 whitespace-nowrap"
+          style={colors.length ? { color: colors[i % colors.length] } : undefined}
+        >
+          {words[i]}
+        </motion.span>
+      </AnimatePresence>
+    </span>
   )
 }
 

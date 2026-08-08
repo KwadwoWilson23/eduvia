@@ -21,7 +21,7 @@ export default function TeacherView({ account }) {
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="font-heading text-3xl font-extrabold tracking-tightest sm:text-4xl lg:text-[44px]">
-            <DoodleUnderline color="#4F46E5">{teacherView.title}</DoodleUnderline>
+            <DoodleUnderline color="#1E88F5">{teacherView.title}</DoodleUnderline>
           </h1>
           <p className="mt-5 text-sm text-mute sm:text-base">
             Welcome back, {account?.fullName || 'Teacher'}

@@ -18,7 +18,7 @@ export default function Testimonials() {
             <span className="word-soft-dark">Four roles,</span>{' '}
             <span className="relative inline-block">
               one platform
-              <Scribble color="#A855F7" width={250} className="absolute -bottom-1 left-0 w-full" delay={0.4} />
+              <Scribble color="#1E88F5" width={250} className="absolute -bottom-1 left-0 w-full" delay={0.4} />
             </span>
           </h2>
           <p className="mt-9 text-base leading-8 text-night/50">

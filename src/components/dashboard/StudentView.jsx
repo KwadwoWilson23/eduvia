@@ -6,7 +6,7 @@ import { DoodleUnderline, DoodleStar } from '../shared/Doodles'
 import { labelFor } from '../onboarding/steps'
 import { studentView } from '../../mockData'
 
-const dotColors = { brand: '#4F46E5', rose: '#F43F5E', amber: '#F59E0B', ink: '#0F172A' }
+const dotColors = { brand: '#1E88F5', rose: '#F43F5E', amber: '#F59E0B', ink: '#0F172A' }
 const kindText = { brand: 'text-brand', rose: 'text-rose', amber: 'text-amber', ink: 'text-ink' }
 const EASE = [0.16, 1, 0.3, 1]
 
@@ -18,7 +18,7 @@ export default function StudentView({ account }) {
     <div className="space-y-6">
       <header className="relative">
         <h1 className="font-heading text-3xl font-extrabold tracking-tightest sm:text-4xl lg:text-[44px]">
-          Welcome back, <DoodleUnderline color="#4F46E5">{firstName}</DoodleUnderline>
+          Welcome back, <DoodleUnderline color="#1E88F5">{firstName}</DoodleUnderline>
         </h1>
         <p className="mt-5 text-sm text-mute sm:text-base">
           {programme ? `${programme} · ` : ''}
@@ -102,7 +102,7 @@ export default function StudentView({ account }) {
                     </div>
                     <ProgressBar
                       value={course.progress}
-                      color={course.progress >= 80 ? '#10B981' : '#4F46E5'}
+                      color={course.progress >= 80 ? '#10B981' : '#1E88F5'}
                       delay={i * 0.08}
                       thickness={7}
                     />

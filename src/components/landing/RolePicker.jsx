@@ -1,8 +1,15 @@
 import { motion } from 'framer-motion'
-import { ArrowUpRight } from 'lucide-react'
-import Blob3D, { Scribble } from '../shared/Blob3D'
+import { ArrowUpRight, GraduationCap, Users, Presentation, Building2 } from 'lucide-react'
+import { Scribble } from '../shared/Blob3D'
 import { Reveal, EASE } from '../shared/Motion'
 import { roleOptions } from '../../mockData'
+
+export const roleIcons = {
+  student: GraduationCap,
+  parent: Users,
+  teacher: Presentation,
+  proprietor: Building2,
+}
 
 /** What each role is asked for — set out plainly before anyone commits. */
 const asks = {
@@ -16,7 +23,7 @@ export default function RolePicker({ onPick }) {
   return (
     <section id="about" className="relative overflow-hidden bg-night py-24 lg:py-32">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <div className="aurora left-1/4 top-0 h-[420px] w-[420px] animate-drift-slow bg-grape/15" />
+        <div className="aurora left-1/4 top-0 h-[420px] w-[420px] animate-drift-slow bg-azure/15" />
       </div>
 
       <div className="relative mx-auto max-w-shell px-4 sm:px-6 lg:px-10">
@@ -35,52 +42,62 @@ export default function RolePicker({ onPick }) {
         </Reveal>
 
         <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {roleOptions.map((role, i) => (
-            <motion.button
-              key={role.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.65, delay: i * 0.09, ease: EASE }}
-              whileHover={{ y: -8 }}
-              onClick={() => onPick(role.id)}
-              className="group relative flex flex-col overflow-hidden rounded-4xl border border-white/12 bg-white/[0.04] p-7 text-left transition-colors duration-300 hover:border-white/35 hover:bg-white/[0.08]"
-            >
-              <span
-                aria-hidden="true"
-                className="aurora -right-12 -top-12 h-40 w-40 opacity-35 transition-opacity duration-500 group-hover:opacity-90"
-                style={{ backgroundColor: role.hex }}
-              />
+          {roleOptions.map((role, i) => {
+            const Icon = roleIcons[role.id]
+            return (
+              <motion.button
+                key={role.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.65, delay: i * 0.09, ease: EASE }}
+                whileHover={{ y: -8 }}
+                onClick={() => onPick(role.id)}
+                className="group relative flex flex-col overflow-hidden rounded-4xl border border-white/12 bg-white/[0.04] p-7 text-left transition-colors duration-300 hover:border-white/35 hover:bg-white/[0.08]"
+              >
+                <span
+                  aria-hidden="true"
+                  className="aurora -right-12 -top-12 h-40 w-40 opacity-25 transition-opacity duration-500 group-hover:opacity-70"
+                  style={{ backgroundColor: role.hex }}
+                />
 
-              <span className="relative">
-                <Blob3D shape={['pebble', 'droplet', 'torus', 'gem'][i % 4]} hex={role.hex} size={76} rotate={-14} />
+                <span className="relative">
+                  <motion.span
+                    whileHover={{ rotate: -6, scale: 1.06 }}
+                    transition={{ type: 'spring', stiffness: 320, damping: 18 }}
+                    className="flex h-14 w-14 items-center justify-center rounded-2xl border"
+                    style={{ borderColor: `${role.hex}55`, backgroundColor: `${role.hex}1F`, color: role.hex }}
+                  >
+                    <Icon size={24} strokeWidth={2} />
+                  </motion.span>
 
-                <span className="mt-6 block font-heading text-2xl font-extrabold tracking-tight">{role.label}</span>
-                <span className="mt-2 block text-sm leading-6 text-white/50">{role.blurb}</span>
+                  <span className="mt-6 block font-heading text-2xl font-extrabold tracking-tight">{role.label}</span>
+                  <span className="mt-2 block text-sm leading-6 text-white/50">{role.blurb}</span>
 
-                <span className="mt-7 block border-t border-white/10 pt-5">
-                  <span className="eyebrow text-white/30">We&apos;ll ask for</span>
-                  <span className="mt-3 block space-y-1.5">
-                    {asks[role.id].map((ask) => (
-                      <span key={ask} className="flex items-center gap-2 text-xs text-white/55">
-                        <span className="h-1 w-1 rounded-full" style={{ backgroundColor: role.hex }} />
-                        {ask}
-                      </span>
-                    ))}
+                  <span className="mt-7 block border-t border-white/10 pt-5">
+                    <span className="eyebrow text-white/30">We&apos;ll ask for</span>
+                    <span className="mt-3 block space-y-1.5">
+                      {asks[role.id].map((ask) => (
+                        <span key={ask} className="flex items-center gap-2 text-xs text-white/55">
+                          <span className="h-1 w-1 rounded-full" style={{ backgroundColor: role.hex }} />
+                          {ask}
+                        </span>
+                      ))}
+                    </span>
+                  </span>
+
+                  <span className="mt-7 flex items-center gap-1.5 text-sm font-bold text-white">
+                    Continue
+                    <ArrowUpRight
+                      size={16}
+                      strokeWidth={2.5}
+                      className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
+                    />
                   </span>
                 </span>
-
-                <span className="mt-7 flex items-center gap-1.5 text-sm font-bold text-white">
-                  Continue
-                  <ArrowUpRight
-                    size={16}
-                    strokeWidth={2.5}
-                    className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
-                  />
-                </span>
-              </span>
-            </motion.button>
-          ))}
+              </motion.button>
+            )
+          })}
         </div>
 
         <Reveal delay={0.2} className="mt-10 text-center">

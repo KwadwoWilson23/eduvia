@@ -3,7 +3,7 @@ import CountUp from '../shared/CountUp'
 import { Stagger, staggerChild } from '../shared/Motion'
 import { stats } from '../../mockData'
 
-const accents = ['#A855F7', '#A3E635', '#22D3EE', '#F97316']
+const accents = ['#1E88F5', '#A3E635', '#22D3EE', '#F97316']
 
 export default function StatsRow() {
   return (

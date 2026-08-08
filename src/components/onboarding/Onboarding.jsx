@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowLeft, ArrowRight, Check, Copy, X, ShieldCheck, Search } from 'lucide-react'
-import Blob3D from '../shared/Blob3D'
+import { LogoMark } from '../shared/Logo'
+import { roleIcons } from '../landing/RolePicker'
 import { roleOptions } from '../../mockData'
 import { activeSteps, labelFor } from './steps'
 import { generateStudentId, saveStudent, findStudentById, normaliseStudentId } from '../../lib/accounts'
@@ -40,7 +41,15 @@ function RoleStep({ onPick }) {
               style={{ backgroundColor: role.hex }}
             />
             <span className="relative block">
-              <Blob3D shape="pebble" hex={role.hex} size={52} rotate={-12} />
+              <span
+                className="flex h-12 w-12 items-center justify-center rounded-2xl border"
+                style={{ borderColor: `${role.hex}55`, backgroundColor: `${role.hex}1F`, color: role.hex }}
+              >
+                {(() => {
+                  const Icon = roleIcons[role.id]
+                  return <Icon size={21} strokeWidth={2} />
+                })()}
+              </span>
               <span className="mt-4 block font-heading text-xl font-extrabold">{role.label}</span>
               <span className="mt-1.5 block text-[13px] leading-6 text-white/50">{role.blurb}</span>
             </span>
@@ -219,7 +228,7 @@ function IssuedStep({ studentId }) {
 
   return (
     <div className="text-center">
-      <Blob3D shape="gem" hex="#A3E635" size={96} rotate={-10} float className="mx-auto" />
+      <LogoMark size={64} bg="#121214" animate className="mx-auto" />
 
       <h2 className="mt-6 font-heading text-3xl font-extrabold tracking-tightest sm:text-4xl">
         You&apos;re all set
@@ -389,7 +398,7 @@ export default function Onboarding({ open, initialRole = null, onClose, onComple
       >
         {/* Ambient colour */}
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-          <div className="aurora -left-16 -top-16 h-64 w-64 bg-grape/25" />
+          <div className="aurora -left-16 -top-16 h-64 w-64 bg-azure/25" />
           <div className="aurora -bottom-20 -right-10 h-56 w-56 bg-aqua/20" />
         </div>
 

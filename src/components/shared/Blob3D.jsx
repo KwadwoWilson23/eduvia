@@ -57,7 +57,7 @@ const shapes = {
 
 export default function Blob3D({
   shape = 'pebble',
-  hex = '#A855F7',
+  hex = '#1E88F5',
   size = 220,
   className = '',
   rotate = 0,

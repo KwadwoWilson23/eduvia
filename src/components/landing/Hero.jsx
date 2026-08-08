@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowUpRight, Video, Mic } from 'lucide-react'
 import Blob3D, { Scribble, Squiggle } from '../shared/Blob3D'
-import { SplitWords, EASE } from '../shared/Motion'
+import { SplitWords, RotatingWord, EASE } from '../shared/Motion'
 import { navLinks, heroCards } from '../../mockData'
 
 const rise = {
@@ -58,14 +58,14 @@ export default function Hero({ onLogin, onExplore }) {
     <section id="top" ref={ref} className="relative overflow-hidden bg-night pb-32 pt-10 lg:pb-40">
       {/* Colour wash */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <div className="aurora -left-32 top-10 h-[520px] w-[520px] animate-drift bg-grape/25" />
+        <div className="aurora -left-32 top-10 h-[520px] w-[520px] animate-drift bg-azure/25" />
         <div className="aurora -right-24 top-1/4 h-[460px] w-[460px] animate-drift-slow bg-aqua/20" />
         <div className="aurora bottom-0 left-1/3 h-[420px] w-[420px] animate-drift bg-tangerine/15" />
       </div>
 
       {/* Glossy 3D shapes */}
       <motion.div style={{ y: shapesY }} aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <Blob3D shape="pebble" hex="#A855F7" size={210} rotate={-18} float className="absolute right-[3%] top-[9%] hidden lg:block" />
+        <Blob3D shape="pebble" hex="#1E88F5" size={210} rotate={-18} float className="absolute right-[3%] top-[9%] hidden lg:block" />
         <Blob3D shape="torus" hex="#F97316" size={150} rotate={12} float delay={1.2} className="absolute left-[2%] top-[48%] hidden lg:block" />
         <Blob3D shape="droplet" hex="#A3E635" size={120} rotate={-8} float delay={2.1} className="absolute bottom-[10%] right-[9%] hidden xl:block" />
         <Blob3D shape="gem" hex="#22D3EE" size={104} rotate={20} float delay={0.6} className="absolute left-[8%] top-[16%] hidden xl:block" />
@@ -113,8 +113,13 @@ export default function Hero({ onLogin, onExplore }) {
           custom={0.55}
           className="mx-auto mt-12 max-w-xl text-base leading-8 text-white/50 sm:text-lg"
         >
-          One platform for students, parents, teachers, and school proprietors — from SHS 1 through your final year
-          at university.
+          One platform for{' '}
+          <RotatingWord
+            words={['students', 'parents', 'teachers', 'proprietors']}
+            colors={['#1E88F5', '#F97316', '#A3E635', '#22D3EE']}
+            className="font-bold"
+          />{' '}
+          — from SHS 1 through your final year at university.
         </motion.p>
 
         <motion.div

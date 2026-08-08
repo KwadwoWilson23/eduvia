@@ -11,17 +11,18 @@ export default {
         paper: '#F8FAFC',
         bone: '#F4F4F2', // light landing sections
 
-        // Playful accent set — the 3D shapes and doodles draw from these
-        grape: '#A855F7',
+        // Accent set — the logo blue leads, everything else supports it
+        azure: '#1E88F5',
+        'azure-deep': '#0B63C5',
         tangerine: '#F97316',
         lime: '#A3E635',
         aqua: '#22D3EE',
         blush: '#F472B6',
         sun: '#FACC15',
 
-        // Portal accents
-        brand: '#4F46E5',
-        'brand-soft': '#818CF8',
+        // Portal accents — same blue, named for its role
+        brand: '#1E88F5',
+        'brand-soft': '#7CC4FF',
         success: '#10B981',
         amber: '#F59E0B',
         rose: '#F43F5E',
@@ -48,7 +49,7 @@ export default {
         glass: '0 8px 32px -8px rgb(15 23 42 / 0.12), 0 2px 8px -2px rgb(15 23 42 / 0.06)',
         'glass-lg': '0 24px 64px -16px rgb(15 23 42 / 0.18), 0 4px 16px -4px rgb(15 23 42 / 0.08)',
         'glass-dark': '0 8px 32px -8px rgb(0 0 0 / 0.5)',
-        lift: '0 20px 48px -12px rgb(79 70 229 / 0.28)',
+        lift: '0 20px 48px -12px rgb(30 136 245 / 0.32)',
         pop: '0 24px 60px -16px rgb(0 0 0 / 0.55)',
       },
       maxWidth: {

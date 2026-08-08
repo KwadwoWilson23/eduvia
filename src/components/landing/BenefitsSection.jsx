@@ -5,7 +5,7 @@ import { EASE } from '../shared/Motion'
 import { benefitPills } from '../../mockData'
 
 const toneClass = {
-  grape: 'bg-grape text-white',
+  azure: 'bg-azure text-white',
   lime: 'bg-lime text-night',
   tangerine: 'bg-tangerine text-white',
   aqua: 'bg-aqua text-night',
@@ -41,12 +41,12 @@ export default function BenefitsSection() {
   return (
     <section id="benefits" ref={ref} className="relative overflow-hidden bg-night">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <div className="aurora left-[-10%] top-[10%] h-[500px] w-[500px] animate-drift bg-grape/25" />
+        <div className="aurora left-[-10%] top-[10%] h-[500px] w-[500px] animate-drift bg-azure/25" />
         <div className="aurora bottom-[-10%] right-[-6%] h-[440px] w-[440px] animate-drift-slow bg-lime/15" />
       </div>
 
       <motion.div style={{ y: shapesY }} aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <Blob3D shape="torus" hex="#A855F7" size={180} rotate={-16} float className="absolute -left-12 top-[18%] hidden lg:block" />
+        <Blob3D shape="torus" hex="#1E88F5" size={180} rotate={-16} float className="absolute -left-12 top-[18%] hidden lg:block" />
         <Blob3D shape="droplet" hex="#22D3EE" size={140} rotate={14} float delay={1.6} className="absolute -right-8 bottom-[18%] hidden lg:block" />
       </motion.div>
 

@@ -6,6 +6,7 @@ import Hero from './components/landing/Hero'
 import RolePicker from './components/landing/RolePicker'
 import StatsRow from './components/landing/StatsRow'
 import Discover from './components/landing/Discover'
+import HowItWorks from './components/landing/HowItWorks'
 import FeatureShowcase from './components/landing/FeatureShowcase'
 import BenefitsSection from './components/landing/BenefitsSection'
 import Testimonials from './components/landing/Testimonials'
@@ -67,6 +68,7 @@ export default function App() {
           <RolePicker onPick={(role) => startOnboarding(role)} />
           <StatsRow />
           <Discover />
+          <HowItWorks />
           <FeatureShowcase />
           <BenefitsSection />
           <Testimonials />

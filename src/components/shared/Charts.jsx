@@ -15,8 +15,8 @@ const EASE = [0.16, 1, 0.3, 1]
 export function BarChart({
   data,
   height = 220,
-  color = '#4F46E5',
-  mutedColor = 'rgba(79,70,229,0.16)',
+  color = '#1E88F5',
+  mutedColor = 'rgba(30,136,245,0.18)',
   highlightAbove = null,
   showValues = true,
   className = '',
@@ -125,7 +125,7 @@ export function LineChart({ values, height = 180, color = '#10B981', fill = true
  * Horizontal progress track
  * ------------------------------------------------------------------ */
 
-export function ProgressBar({ value, color = '#4F46E5', thickness = 6, delay = 0, className = '' }) {
+export function ProgressBar({ value, color = '#1E88F5', thickness = 6, delay = 0, className = '' }) {
   return (
     <div
       className={`w-full overflow-hidden rounded-full bg-ink/[0.07] ${className}`}

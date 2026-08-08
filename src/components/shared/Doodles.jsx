@@ -8,7 +8,7 @@ import { motion } from 'framer-motion'
 const drawTransition = { duration: 1.1, ease: [0.65, 0, 0.35, 1] }
 
 /** Wraps a word and draws a lopsided oval around it. */
-export function DoodleOval({ children, color = '#4F46E5', className = '', delay = 0.6 }) {
+export function DoodleOval({ children, color = '#1E88F5', className = '', delay = 0.6 }) {
   return (
     <span className={`relative inline-block whitespace-nowrap ${className}`}>
       <span className="relative z-10">{children}</span>
@@ -35,7 +35,7 @@ export function DoodleOval({ children, color = '#4F46E5', className = '', delay 
 }
 
 /** Rough underline stroke, sits on the baseline of a headline. */
-export function DoodleUnderline({ children, color = '#4F46E5', className = '', delay = 0.4 }) {
+export function DoodleUnderline({ children, color = '#1E88F5', className = '', delay = 0.4 }) {
   return (
     <span className={`relative inline-block ${className}`}>
       <span className="relative z-10">{children}</span>

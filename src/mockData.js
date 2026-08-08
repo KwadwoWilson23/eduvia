@@ -20,6 +20,7 @@ export const brand = {
 
 export const navLinks = [
   { label: 'About Us', href: '#about' },
+  { label: 'How It Works', href: '#how' },
   { label: 'Features', href: '#features' },
   { label: 'Benefits', href: '#benefits' },
   { label: 'Testimonials', href: '#testimonials' },
@@ -34,8 +35,8 @@ export const roleOptions = [
     id: 'student',
     label: 'Student',
     blurb: 'See your timetable, coursework, and grades.',
-    accent: 'grape',
-    hex: '#A855F7',
+    accent: 'azure',
+    hex: '#1E88F5',
   },
   {
     id: 'parent',
@@ -65,7 +66,7 @@ export const divisionOptions = [
     id: 'shs',
     label: 'Senior High School',
     blurb: 'SHS 1 – 3, working towards WASSCE.',
-    hex: '#A855F7',
+    hex: '#1E88F5',
   },
   {
     id: 'tertiary',
@@ -164,7 +165,7 @@ export const heroCards = [
 ]
 
 export const heroBadges = [
-  { label: 'Live now · SHS 3 Physics', tone: 'grape' },
+  { label: 'Live now · SHS 3 Physics', tone: 'azure' },
   { label: 'Term reports published', tone: 'lime' },
   { label: '18 assignments due', tone: 'tangerine' },
 ]
@@ -216,7 +217,7 @@ export const analyticsPreview = {
   ],
   gradeDistribution: [
     { label: 'A', value: 34, color: '#A3E635' },
-    { label: 'B', value: 41, color: '#A855F7' },
+    { label: 'B', value: 41, color: '#1E88F5' },
     { label: 'C', value: 18, color: '#22D3EE' },
     { label: 'D', value: 5, color: '#FACC15' },
     { label: 'E', value: 2, color: '#F472B6' },
@@ -263,14 +264,14 @@ export const videoPreview = {
  * ------------------------------------------------------------------ */
 
 export const benefitPills = [
-  { id: 'b1', label: 'One Timetable', tone: 'grape' },
+  { id: 'b1', label: 'One Timetable', tone: 'azure' },
   { id: 'b2', label: 'Live Attendance', tone: 'lime' },
   { id: 'b3', label: 'Parent Connect', tone: 'tangerine' },
   { id: 'b4', label: 'Faster Marking', tone: 'aqua' },
   { id: 'b5', label: 'Termly Reports', tone: 'blush' },
   { id: 'b6', label: 'Fee Statements', tone: 'white' },
   { id: 'b7', label: 'Lesson Recordings', tone: 'sun' },
-  { id: 'b8', label: 'Staff Briefings', tone: 'grape' },
+  { id: 'b8', label: 'Staff Briefings', tone: 'azure' },
 ]
 
 export const testimonials = [
@@ -300,7 +301,7 @@ export const testimonials = [
     name: 'Amara Boateng',
     title: 'SHS Year 3 · General Science',
     initials: 'AB',
-    accent: '#A855F7',
+    accent: '#1E88F5',
     quote:
       'Before, I found out about a class test from a friend the night before. Now my focus schedule shows every lecture, deadline, and exam the moment a teacher posts it.',
   },
