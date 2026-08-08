@@ -159,12 +159,6 @@ export const populationBands = [
  * LANDING — HERO & STATS
  * ------------------------------------------------------------------ */
 
-export const heroBadges = [
-  { label: 'Live now · SHS 3 Physics', tone: 'azure' },
-  { label: 'Term reports published', tone: 'lime' },
-  { label: '18 assignments due', tone: 'tangerine' },
-]
-
 export const stats = [
   { id: 'students', value: 15400, suffix: '+', label: 'Active Students', sub: 'Senior High & Tertiary' },
   { id: 'teachers', value: 1800, suffix: '+', label: 'Teachers', sub: 'Marking on Eduvia daily' },

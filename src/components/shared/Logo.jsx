@@ -53,12 +53,9 @@ export function LogoMark({ size = 30, color = '#1E88F5', bg = '#0A0A0B', animate
 export default function Logo({ inverted = false, animate = false, className = '' }) {
   return (
     <div className={`flex items-center gap-2.5 ${className}`}>
-      <LogoMark
-        size={30}
-        color="#1E88F5"
-        bg={inverted ? '#FFFFFF' : '#0A0A0B'}
-        animate={animate}
-      />
+      {/* `bg` is the colour the mark's negative space is cut with, so it must
+          match the surface behind it. */}
+      <LogoMark size={30} color="#1E88F5" bg={inverted ? '#F4F4F2' : '#0A0A0B'} animate={animate} />
       <span
         className={`font-heading text-[20px] font-extrabold tracking-tight ${
           inverted ? 'text-ink' : 'text-white'

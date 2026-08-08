@@ -63,6 +63,13 @@
            hover:-translate-y-0.5 hover:shadow-pop active:translate-y-0;
   }
 
+  /* Landing on light: solid ink pill */
+  .btn-dark {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-night px-7 py-3.5
+           text-sm font-bold text-white transition-all duration-300
+           hover:-translate-y-0.5 hover:bg-azure hover:shadow-lift active:translate-y-0;
+  }
+
   .btn-ghost {
     @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/25
            bg-white/[0.06] px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-xl
