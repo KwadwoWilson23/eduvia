@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { CalendarCheck, Wallet, Star, MessageSquare, ChevronDown, CornerUpLeft, Check } from 'lucide-react'
+import { CalendarCheck, Wallet, Star, MessageSquare, ChevronDown, CornerUpLeft, Check, Lock } from 'lucide-react'
 import Pill from '../shared/Pill'
 import { ProgressBar } from '../shared/Charts'
 import { DoodleUnderline } from '../shared/Doodles'
 import { labelFor } from '../onboarding/steps'
+import { hasFullAccess } from '../../lib/access'
 import { parentView } from '../../mockData'
 
 const EASE = [0.16, 1, 0.3, 1]
@@ -176,8 +177,8 @@ export default function ParentView({ account }) {
             </button>
           </motion.div>
 
-          {/* Grades */}
-          <motion.div whileHover={{ y: -6 }} className="glass glass-hover rounded-3xl p-6 lg:p-7">
+          {/* Grades — gated behind fee payment */}
+          <motion.div whileHover={{ y: -6 }} className="glass glass-hover relative rounded-3xl p-6 lg:p-7">
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-2.5 text-sm font-bold">
                 <Star size={17} strokeWidth={2} className="text-brand" />
@@ -187,7 +188,7 @@ export default function ParentView({ account }) {
                 View all
               </button>
             </div>
-            <ul className="mt-5 divide-y divide-ink/[0.07]">
+            <ul className={`mt-5 divide-y divide-ink/[0.07] ${!hasFullAccess(child) ? 'select-none blur-sm' : ''}`}>
               {child.grades.map((g) => (
                 <li key={g.subject} className="flex items-center justify-between gap-3 py-3.5">
                   <div className="min-w-0">
@@ -200,11 +201,25 @@ export default function ParentView({ account }) {
                 </li>
               ))}
             </ul>
+
+            {!hasFullAccess(child) && (
+              <div className="absolute inset-x-0 bottom-0 top-16 flex flex-col items-center justify-center gap-3 rounded-b-3xl bg-white/70 p-6 backdrop-blur-md">
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ink/[0.08] text-mute">
+                  <Lock size={17} strokeWidth={2} />
+                </span>
+                <p className="text-center text-xs leading-5 text-mute">
+                  Grades unlock once term fees are cleared.
+                </p>
+                <button className="rounded-full bg-ink px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-brand">
+                  Pay fees
+                </button>
+              </div>
+            )}
           </motion.div>
         </div>
 
-        {/* Teacher messages */}
-        <section className="glass overflow-hidden rounded-4xl">
+        {/* Teacher messages — also behind the fee gate */}
+        <section className="glass relative overflow-hidden rounded-4xl">
           <div className="flex items-center gap-2.5 border-b border-ink/[0.07] px-6 py-5 lg:px-7">
             <MessageSquare size={17} strokeWidth={2} className="text-brand" />
             <h2 className="font-heading text-lg font-extrabold tracking-tight">Teacher Messages</h2>
@@ -213,7 +228,7 @@ export default function ParentView({ account }) {
             </Pill>
           </div>
 
-          <div className="divide-y divide-ink/[0.06]">
+          <div className={`divide-y divide-ink/[0.06] ${!hasFullAccess(child) ? 'select-none blur-sm' : ''}`}>
             {child.messages.map((m, i) => (
               <motion.article
                 key={m.id}
@@ -241,6 +256,23 @@ export default function ParentView({ account }) {
               </motion.article>
             ))}
           </div>
+
+          {!hasFullAccess(child) && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-white/70 backdrop-blur-md">
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-ink text-white">
+                <Lock size={18} strokeWidth={2} />
+              </span>
+              <div className="max-w-xs px-6 text-center">
+                <div className="text-sm font-bold">Messages locked</div>
+                <p className="mt-2 text-xs leading-5 text-mute">
+                  Pay this term's fees to reach {child.name.split(' ')[0]}'s teachers.
+                </p>
+              </div>
+              <button className="rounded-full bg-ink px-5 py-2.5 text-xs font-bold uppercase tracking-wide text-white transition-colors hover:bg-brand">
+                Pay fees now
+              </button>
+            </div>
+          )}
         </section>
       </motion.div>
     </div>

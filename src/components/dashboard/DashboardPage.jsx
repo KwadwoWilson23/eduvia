@@ -7,6 +7,7 @@ import AdminView from './AdminView'
 import TeacherView from './TeacherView'
 import StudentView from './StudentView'
 import ParentView from './ParentView'
+import { SubViewFor } from './SubViews'
 import Logo from '../shared/Logo'
 
 const views = {
@@ -63,15 +64,20 @@ export default function DashboardPage({ account, onExit }) {
 
         <main className="px-4 pb-36 pt-8 sm:px-6 lg:px-10 lg:pb-40 lg:pt-12">
           <div className="mx-auto max-w-shell">
-            {/* Keying on role remounts the view so it animates in from scratch.
-                No exit transition — a stalled one would block the swap. */}
+            {/* Keying on role+nav remounts on any surface change so the
+                incoming view always animates in from scratch. No exit
+                transition — a stalled one would block the swap. */}
             <motion.div
-              key={role}
+              key={`${role}-${navItem}`}
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             >
-              <ActiveView account={account} />
+              {navItem === 'dashboard' ? (
+                <ActiveView account={account} />
+              ) : (
+                <SubViewFor navItem={navItem} role={role} account={account} />
+              )}
             </motion.div>
           </div>
         </main>

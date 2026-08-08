@@ -10,6 +10,7 @@ import HowItWorks from './components/landing/HowItWorks'
 import FeatureShowcase from './components/landing/FeatureShowcase'
 import BenefitsSection from './components/landing/BenefitsSection'
 import Testimonials from './components/landing/Testimonials'
+import HowItEarns from './components/landing/HowItEarns'
 import Footer from './components/landing/Footer'
 
 import Onboarding from './components/onboarding/Onboarding'
@@ -72,6 +73,7 @@ export default function App() {
           <FeatureShowcase />
           <BenefitsSection />
           <Testimonials />
+          <HowItEarns />
         </main>
         <Footer onLogin={() => startOnboarding()} />
       </motion.div>

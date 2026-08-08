@@ -53,6 +53,19 @@ export default function Sidebar({ account, active, onSelect, onExit, primaryActi
             <div className="mt-1 font-mono text-[13px] font-bold tracking-wider">{account.studentId}</div>
           </div>
         )}
+
+        {account?.inviteCode && (
+          <div className="mt-2 rounded-2xl bg-ink/[0.04] px-3.5 py-3">
+            <div className="flex items-baseline justify-between">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-mute">Staff invite code</span>
+              <span className="text-[10px] font-semibold text-success">Active</span>
+            </div>
+            <div className="mt-1 font-mono text-[13px] font-bold tracking-wider">{account.inviteCode}</div>
+            <div className="mt-1.5 text-[10px] leading-4 text-mute">
+              Share this with teachers so they can join your school.
+            </div>
+          </div>
+        )}
       </div>
 
       <nav className="flex-1 px-3 py-5">

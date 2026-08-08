@@ -22,7 +22,7 @@ export const navLinks = [
   { label: 'About Us', href: '#about' },
   { label: 'How It Works', href: '#how' },
   { label: 'Features', href: '#features' },
-  { label: 'Benefits', href: '#benefits' },
+  { label: 'Pricing', href: '#pricing' },
   { label: 'Testimonials', href: '#testimonials' },
 ]
 

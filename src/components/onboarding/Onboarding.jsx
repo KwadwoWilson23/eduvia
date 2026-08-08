@@ -6,6 +6,11 @@ import { roleIcons } from '../landing/RolePicker'
 import { roleOptions } from '../../mockData'
 import { activeSteps, labelFor } from './steps'
 import { generateStudentId, saveStudent, findStudentById, normaliseStudentId } from '../../lib/accounts'
+import { isValidInviteCode, mintProprietorCode, pricing } from '../../lib/access'
+import { findSchoolById } from '../../lib/schools'
+import SchoolPicker from './SchoolPicker'
+import InviteCodeStep from './InviteCodeStep'
+import BillingSummary from './BillingSummary'
 
 const EASE = [0.16, 1, 0.3, 1]
 
@@ -321,23 +326,44 @@ export default function Onboarding({ open, initialRole = null, onClose, onComple
 
   const canAdvance = () => {
     if (!step) return false
-    if (step.type === 'issued') return true
+    if (step.type === 'issued' || step.type === 'billing') return true
     if (step.type === 'childId') return Boolean(childMatch) || usingDemo
+    if (step.type === 'inviteCode') return isValidInviteCode(answers.inviteCode)
+    if (step.type === 'school') return Boolean(answers.school)
     const value = answers[step.id]
     if (step.type === 'text') return String(value || '').trim().length >= (step.minLength || 1)
     return Boolean(value)
   }
 
+  // Resolve the school answer (either a directory id or a "custom:" string)
+  // to a readable name for the account record.
+  const resolveSchool = (raw) => {
+    if (!raw) return 'Your school'
+    if (String(raw).startsWith('custom:')) return raw.slice(7)
+    return findSchoolById(raw)?.name || raw
+  }
+
   const finish = () => {
+    const schoolName = resolveSchool(answers.school)
+
+    // A proprietor completing onboarding mints an invite code that any of
+    // their teachers can enter on the teacher flow.
+    const inviteCode = role === 'proprietor' ? mintProprietorCode(schoolName) : null
+
     const account = {
       role,
       fullName: answers.fullName?.trim() || 'Eduvia User',
-      school: answers.school?.trim() || 'Your school',
+      school: schoolName,
+      schoolId: answers.school || null,
+      schoolKind: answers.schoolKind || null,
       division: answers.division || null,
       programme: answers.programme || null,
       subject: answers.subject || null,
       population: answers.population || null,
       studentId: studentId || null,
+      inviteCode,
+      // A proprietor's own school is always "paid" — they own the subscription.
+      billingStatus: role === 'proprietor' ? 'active' : null,
       childId: childMatch?.studentId || null,
       childName: childMatch?.fullName || null,
       childProgramme: childMatch?.programme || null,
@@ -465,6 +491,24 @@ export default function Onboarding({ open, initialRole = null, onClose, onComple
                   usingDemo={usingDemo}
                   onUseDemo={() => setUsingDemo(true)}
                 />
+              )}
+
+              {role && step?.type === 'school' && (
+                <SchoolPicker
+                  title={step.title}
+                  hint={step.hint}
+                  kind={step.kindFrom ? answers[step.kindFrom] : step.kind}
+                  value={answers.school}
+                  onChange={(v) => setAnswer('school', v)}
+                />
+              )}
+
+              {role && step?.type === 'inviteCode' && (
+                <InviteCodeStep value={answers.inviteCode} onChange={(v) => setAnswer('inviteCode', v)} />
+              )}
+
+              {role && step?.type === 'billing' && (
+                <BillingSummary school={resolveSchool(answers.school)} population={answers.population} pricing={pricing} />
               )}
 
               {role && step?.type === 'issued' && <IssuedStep studentId={studentId} />}

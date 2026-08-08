@@ -5,23 +5,16 @@ import {
   teachingSubjects,
   populationBands,
 } from '../../mockData'
+import { findSchoolById } from '../../lib/schools'
 
 /**
- * Each role walks a different path. A step is either a `choice` (pick one of
- * a list), a `text` (type an answer), or one of two bespoke screens.
+ * Each role walks a different path. A step is either a `choice` (pick one
+ * of a list), a `text` (type an answer), `school` (searchable directory),
+ * `inviteCode`, `childId`, or `issued`.
  *
- * `when` lets a step drop out of the flow — the programme step, for instance,
- * depends on which division was picked.
+ * `when` lets a step drop out of the flow — the SHS programme step only
+ * shows if the person picked "Senior High School" first, and so on.
  */
-
-const schoolStep = (label, hint) => ({
-  id: 'school',
-  type: 'text',
-  title: label,
-  hint,
-  placeholder: 'e.g. Sunrise Senior High School',
-  minLength: 2,
-})
 
 const nameStep = (title, placeholder) => ({
   id: 'fullName',
@@ -49,9 +42,22 @@ const programmeStep = (division, list) => ({
   options: list.map((p) => ({ value: p.id, label: p.label, detail: p.subjects })),
 })
 
+/** The proprietor picks kind first; the school list is filtered to match. */
+const proprietorSchoolKindStep = {
+  id: 'schoolKind',
+  type: 'choice',
+  title: 'What does your school offer?',
+  hint: 'This filters the list of schools we show next.',
+  options: [
+    { value: 'shs', label: 'Senior High School', detail: 'SHS 1 – 3, working towards WASSCE.', hex: '#1E88F5' },
+    { value: 'tertiary', label: 'Tertiary', detail: 'University, polytechnic, or college.', hex: '#22D3EE' },
+    { value: 'both', label: 'Both', detail: 'Senior High and Tertiary on one campus.', hex: '#A3E635' },
+  ],
+}
+
 export const flows = {
   student: [
-    schoolStep('Which school do you attend?', 'Type it exactly as your parent would know it.'),
+    { id: 'school', type: 'school', title: 'Which school do you attend?', hint: 'Search for your school by name.', kind: null },
     divisionStep,
     programmeStep('shs', shsProgrammes),
     programmeStep('tertiary', tertiaryProgrammes),
@@ -60,7 +66,8 @@ export const flows = {
   ],
 
   teacher: [
-    schoolStep('Which school do you teach at?'),
+    { id: 'inviteCode', type: 'inviteCode', title: 'Your invite code' },
+    { id: 'school', type: 'school', title: 'Which school do you teach at?', hint: 'Confirm the school that issued your code.', kind: null },
     {
       id: 'division',
       type: 'choice',
@@ -78,15 +85,14 @@ export const flows = {
   ],
 
   proprietor: [
-    schoolStep('Which school do you own or run?'),
+    proprietorSchoolKindStep,
+    // The school list respects what they picked above.
     {
-      id: 'division',
-      type: 'choice',
-      title: 'What does the school offer?',
-      options: [
-        ...divisionOptions.map((d) => ({ value: d.id, label: d.label, detail: d.blurb, hex: d.hex })),
-        { value: 'both', label: 'Both', detail: 'Senior High and Tertiary on one campus.', hex: '#A3E635' },
-      ],
+      id: 'school',
+      type: 'school',
+      title: 'Which school do you own or run?',
+      hint: 'Pick from the list — or add yours if it isn’t there yet.',
+      kindFrom: 'schoolKind',
     },
     {
       id: 'population',
@@ -96,10 +102,11 @@ export const flows = {
       options: populationBands.map((b) => ({ value: b.id, label: b.label })),
     },
     nameStep('What is your full name?', 'e.g. Emily Turner'),
+    { id: 'billing', type: 'billing', title: 'How Eduvia earns' },
   ],
 
   parent: [
-    schoolStep("Which school does your child attend?"),
+    { id: 'school', type: 'school', title: "Which school does your child attend?", kind: null },
     { id: 'childId', type: 'childId', title: "Your child's Eduvia ID" },
     nameStep('What is your full name?', 'e.g. Rachel Kimura'),
   ],
@@ -113,9 +120,16 @@ export function activeSteps(role, answers) {
 /** Human-readable label for a stored answer value. */
 export function labelFor(stepId, value) {
   if (!value) return ''
+  if (stepId === 'school') {
+    if (String(value).startsWith('custom:')) return value.slice(7)
+    return findSchoolById(value)?.name || value
+  }
   if (stepId === 'division') {
     if (value === 'both') return 'Senior High & Tertiary'
     return divisionOptions.find((d) => d.id === value)?.label || value
+  }
+  if (stepId === 'schoolKind') {
+    return { shs: 'Senior High', tertiary: 'Tertiary', both: 'SHS & Tertiary' }[value] || value
   }
   if (stepId === 'programme') {
     const all = [...shsProgrammes, ...tertiaryProgrammes]
