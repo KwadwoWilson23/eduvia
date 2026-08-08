@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-night font-sans text-white antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-heading;
+  }
+
+  :focus-visible {
+    outline: 2px solid #a855f7;
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  ::selection {
+    background: #a855f7;
+    color: #fff;
+  }
+}
+
+@layer components {
+  /* ---------------------------------------------------------------- *
+   * Glass surfaces (portal)
+   * ---------------------------------------------------------------- */
+
+  .glass {
+    @apply border border-white/70 bg-white/60 shadow-glass backdrop-blur-xl;
+  }
+
+  .glass-solid {
+    @apply border border-white/80 bg-white/85 shadow-glass backdrop-blur-xl;
+  }
+
+  .glass-dark {
+    @apply border border-white/10 bg-white/[0.06] shadow-glass-dark backdrop-blur-xl;
+  }
+
+  .glass-hover {
+    @apply transition-all duration-300 hover:border-white/90 hover:bg-white/80 hover:shadow-glass-lg;
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Buttons
+   * ---------------------------------------------------------------- */
+
+  /* Landing: high-contrast white pill on dark */
+  .btn-light {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5
+           text-sm font-bold text-night transition-all duration-300
+           hover:-translate-y-0.5 hover:shadow-pop active:translate-y-0;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/25
+           bg-white/[0.06] px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-xl
+           transition-all duration-300 hover:-translate-y-0.5 hover:border-white/60 hover:bg-white/[0.14];
+  }
+
+  /* Portal: indigo pill */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand px-6 py-3
+           text-sm font-semibold text-white shadow-lift transition-all duration-300
+           hover:-translate-y-0.5 hover:bg-ink hover:shadow-glass-lg active:translate-y-0;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-ink/15
+           bg-white/70 px-6 py-3 text-sm font-semibold text-ink backdrop-blur-xl
+           transition-all duration-300 hover:-translate-y-0.5 hover:border-ink/40 hover:bg-white;
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Type helpers
+   * ---------------------------------------------------------------- */
+
+  .eyebrow {
+    @apply text-[11px] font-bold uppercase tracking-[0.18em];
+  }
+
+  .accent-serif {
+    @apply font-serif italic;
+  }
+
+  /* Mixed-weight headline treatment from the reference art: some words
+     recede in a light grey, the emphasised ones land in full weight. */
+  .word-soft {
+    @apply font-light text-white/35;
+  }
+
+  .word-soft-dark {
+    @apply font-light text-night/30;
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Utilities
+   * ---------------------------------------------------------------- */
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Soft colour wash that sits far below content. */
+  .aurora {
+    @apply pointer-events-none absolute rounded-full blur-3xl;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
