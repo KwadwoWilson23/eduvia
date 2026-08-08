@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowUpRight, Play, CalendarCheck, GraduationCap, Wallet, MessageSquare, TrendingUp } from 'lucide-react'
 import { Scribble, Squiggle } from '../shared/Marks'
 import { SplitWords, RotatingWord, EASE } from '../shared/Motion'
+import ShaderBackground from '../shared/ShaderBackground'
 import { roleOptions } from '../../mockData'
 
 const rise = {
@@ -109,25 +110,21 @@ export default function Hero({ onLogin, onExplore }) {
 
   return (
     <section id="top" ref={ref} className="relative overflow-hidden bg-night pb-6">
-      {/* Colour wash */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <div className="aurora left-1/2 top-[-20%] h-[620px] w-[860px] -translate-x-1/2 bg-azure/25" />
-        <div className="aurora -left-24 top-1/3 h-[420px] w-[420px] animate-drift-slow bg-aqua/15" />
-        <div className="aurora -right-20 top-1/4 h-[400px] w-[400px] animate-drift bg-tangerine/12" />
-      </div>
+      {/* Animated shader — sits behind the copy only. Constrained to the
+          top of the hero so the ambient row and marquee below read on
+          the plain night surface. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[900px] overflow-hidden lg:h-[820px]">
+        <ShaderBackground />
 
-      {/* Fine grid, fading downwards */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-[0.05]"
-        style={{
-          backgroundImage:
-            'linear-gradient(to right, #FFF 1px, transparent 1px), linear-gradient(to bottom, #FFF 1px, transparent 1px)',
-          backgroundSize: '64px 64px',
-          maskImage: 'linear-gradient(to bottom, #000 0%, transparent 85%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, #000 0%, transparent 85%)',
-        }}
-      />
+        {/* Vignette so the copy stays crisp when the nebula flares bright */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(ellipse at center, rgba(10,10,11,0) 30%, rgba(10,10,11,0.55) 78%, rgba(10,10,11,1) 100%)',
+          }}
+        />
+      </div>
 
       <motion.div
         style={{ y: copyY, opacity: copyOpacity }}
