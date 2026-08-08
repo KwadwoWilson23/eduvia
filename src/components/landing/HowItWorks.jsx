@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { BarChart3, ClipboardCheck, PlayCircle, MessageSquareHeart, ChevronLeft, ChevronRight } from 'lucide-react'
 import { BarChart, LineChart, DistributionBar, ProgressBar } from '../shared/Charts'
@@ -11,7 +11,7 @@ import Pill from '../shared/Pill'
  * The four panels shown inside the laptop
  * ------------------------------------------------------------------ */
 
-function AnalyticsPanel() {
+const AnalyticsPanel = memo(function AnalyticsPanel() {
   return (
     <div className="grid h-full grid-cols-2 gap-3">
       <div className="rounded-2xl border border-night/[0.07] bg-white p-4">
@@ -44,9 +44,9 @@ function AnalyticsPanel() {
       </div>
     </div>
   )
-}
+})
 
-function HomeworkPanel() {
+const HomeworkPanel = memo(function HomeworkPanel() {
   return (
     <div className="flex h-full flex-col gap-3">
       <div className="flex items-center justify-between rounded-2xl border border-night/[0.07] bg-white p-4">
@@ -106,9 +106,9 @@ function HomeworkPanel() {
       </div>
     </div>
   )
-}
+})
 
-function VideoPanel() {
+const VideoPanel = memo(function VideoPanel() {
   return (
     <div className="flex h-full flex-col gap-3">
       <div className="relative flex-1 overflow-hidden rounded-2xl bg-night">
@@ -145,9 +145,9 @@ function VideoPanel() {
       </div>
     </div>
   )
-}
+})
 
-function ParentPanel() {
+const ParentPanel = memo(function ParentPanel() {
   return (
     <div className="flex h-full flex-col gap-3">
       <div className="grid grid-cols-3 gap-3">
@@ -200,7 +200,7 @@ function ParentPanel() {
       </div>
     </div>
   )
-}
+})
 
 /* ------------------------------------------------------------------ *
  * Steps
@@ -297,30 +297,69 @@ export default function HowItWorks() {
     setIndex(next)
   }
 
-  // Scrolling through the tall section walks the panels forward. This reads
-  // layout directly rather than going through a scroll-progress motion value,
-  // so it stays correct even when animation frames are throttled.
+  // Scrolling through the tall section walks the panels forward. rAF-throttled
+  // and gated by an IntersectionObserver — we only listen while the section is
+  // on screen, and we only compute layout at most once per animation frame.
+  // Native `scroll` fires many times per frame; without throttling this was a
+  // steady 6–8ms of layout work per event and the main source of scroll jank.
   useEffect(() => {
-    const onScroll = () => {
-      const el = ref.current
-      if (!el) return
+    const el = ref.current
+    if (!el) return
 
+    let ticking = false
+    let listening = false
+    let observing = false
+
+    const compute = () => {
+      ticking = false
       const { top, height } = el.getBoundingClientRect()
-      // Distance travelled through the section's scrollable run.
       const travel = height - window.innerHeight
       if (travel <= 0) return
-
       const progress = Math.min(1, Math.max(0, -top / travel))
       const next = Math.min(steps.length - 1, Math.floor(progress * steps.length))
       show(next, next > indexRef.current ? 1 : -1)
     }
 
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll)
-    return () => {
+    const onScroll = () => {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(compute)
+    }
+
+    const startListening = () => {
+      if (listening) return
+      listening = true
+      window.addEventListener('scroll', onScroll, { passive: true })
+      window.addEventListener('resize', onScroll)
+      compute()
+    }
+    const stopListening = () => {
+      if (!listening) return
+      listening = false
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
+    }
+
+    let io = null
+    if ('IntersectionObserver' in window) {
+      io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) startListening()
+            else stopListening()
+          }
+        },
+        { rootMargin: '200px 0px' }
+      )
+      io.observe(el)
+      observing = true
+    } else {
+      startListening()
+    }
+
+    return () => {
+      stopListening()
+      if (observing && io) io.disconnect()
     }
   }, [])
 

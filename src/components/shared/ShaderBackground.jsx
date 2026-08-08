@@ -175,6 +175,11 @@ export default function ShaderBackground({ className = '' }) {
   const canvasRef = useRef(null)
   const rendererRef = useRef(null)
   const rafRef = useRef(0)
+  // Mirrors visibility + tab focus so the render loop only runs when it's
+  // actually seen. A fragment shader like this can eat 20%+ CPU per frame
+  // on mid-range laptops; leaving it running behind other sections was the
+  // biggest cause of scroll jank down the page.
+  const runningRef = useRef(false)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -190,26 +195,50 @@ export default function ShaderBackground({ className = '' }) {
 
     const size = () => {
       const rect = canvas.getBoundingClientRect()
-      // Fall back to the viewport if layout hasn't happened yet — a 1-pixel
-      // canvas would otherwise render a shader flat black.
       const w = rect.width || window.innerWidth
       const h = rect.height || window.innerHeight
       canvas.width = Math.max(2, Math.floor(w * dpr))
       canvas.height = Math.max(2, Math.floor(h * dpr))
       renderer.updateScale(dpr)
     }
-    // Wait a frame so the canvas has real layout dimensions.
     requestAnimationFrame(size)
 
     const loop = (now) => {
+      if (!runningRef.current) return
       renderer.render(now)
       rafRef.current = requestAnimationFrame(loop)
     }
-    rafRef.current = requestAnimationFrame(loop)
 
-    // Track the parent element so this works inside any bounded container,
-    // not just the whole viewport.
+    const start = () => {
+      if (runningRef.current) return
+      runningRef.current = true
+      rafRef.current = requestAnimationFrame(loop)
+    }
+    const stop = () => {
+      runningRef.current = false
+      cancelAnimationFrame(rafRef.current)
+    }
+
+    // Only run while the wrapper is actually on screen.
     const parent = canvas.parentElement
+    let io = null
+    if (parent && 'IntersectionObserver' in window) {
+      io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting && !document.hidden) start()
+            else stop()
+          }
+        },
+        // A tiny negative margin means we cut the shader the moment it
+        // leaves the viewport rather than lingering during the fade.
+        { rootMargin: '-40px 0px' }
+      )
+      io.observe(parent)
+    } else {
+      start()
+    }
+
     let ro = null
     if (parent && 'ResizeObserver' in window) {
       ro = new ResizeObserver(size)
@@ -218,19 +247,21 @@ export default function ShaderBackground({ className = '' }) {
       window.addEventListener('resize', size)
     }
 
-    // Pause while the tab is hidden — no point spending frames when unseen.
+    // Pause while the tab is hidden too.
     const onVisibility = () => {
-      if (document.hidden) {
-        cancelAnimationFrame(rafRef.current)
-      } else {
-        rafRef.current = requestAnimationFrame(loop)
-      }
+      if (document.hidden) stop()
+      else if (io) {
+        // Let the IntersectionObserver's next entry decide — force a check.
+        const rect = canvas.getBoundingClientRect()
+        if (rect.bottom > 0 && rect.top < window.innerHeight) start()
+      } else start()
     }
     document.addEventListener('visibilitychange', onVisibility)
 
     return () => {
-      cancelAnimationFrame(rafRef.current)
+      stop()
       document.removeEventListener('visibilitychange', onVisibility)
+      if (io) io.disconnect()
       if (ro) ro.disconnect()
       else window.removeEventListener('resize', size)
     }

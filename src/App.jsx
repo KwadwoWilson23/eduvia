@@ -1,22 +1,33 @@
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 
+// First-paint work — kept in the main bundle so the top of the page
+// paints without waiting on a chunk.
 import Header from './components/landing/Header'
 import Hero from './components/landing/Hero'
 import RolePicker from './components/landing/RolePicker'
 import StatsRow from './components/landing/StatsRow'
 import Discover from './components/landing/Discover'
-import HowItWorks from './components/landing/HowItWorks'
-import FeatureShowcase from './components/landing/FeatureShowcase'
-import BenefitsSection from './components/landing/BenefitsSection'
-import Testimonials from './components/landing/Testimonials'
-import HowItEarns from './components/landing/HowItEarns'
-import Footer from './components/landing/Footer'
 
-import Onboarding from './components/onboarding/Onboarding'
-import DashboardPage from './components/dashboard/DashboardPage'
+// Below-the-fold sections and the two big secondary surfaces (portal +
+// onboarding) get their own chunks so the initial JS payload is smaller.
+// Vite will emit these as separate assets and the browser fetches them
+// only when React actually renders them.
+const HowItWorks = lazy(() => import('./components/landing/HowItWorks'))
+const FeatureShowcase = lazy(() => import('./components/landing/FeatureShowcase'))
+const BenefitsSection = lazy(() => import('./components/landing/BenefitsSection'))
+const Testimonials = lazy(() => import('./components/landing/Testimonials'))
+const HowItEarns = lazy(() => import('./components/landing/HowItEarns'))
+const Footer = lazy(() => import('./components/landing/Footer'))
+const Onboarding = lazy(() => import('./components/onboarding/Onboarding'))
+const DashboardPage = lazy(() => import('./components/dashboard/DashboardPage'))
 
 import { saveSession, loadSession, clearSession } from './lib/accounts'
+
+// Placeholder while a lazy chunk loads. Deliberately unstyled — most
+// chunks resolve within a frame or two on a warm cache, and a spinner
+// would flash.
+const FallbackBlock = () => <div style={{ minHeight: '40vh' }} aria-hidden="true" />
 
 /**
  * Two surfaces — the public page and the portal — with the sign-up flow
@@ -32,7 +43,13 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'auto' })
   }, [view])
 
-  const startOnboarding = (role = null) => setOnboarding({ open: true, role })
+  const startOnboarding = (role = null) => {
+    // Warm the onboarding chunk the moment there's intent to open it, so
+    // the click-to-visible latency is dominated by React work rather than
+    // a network round-trip.
+    import('./components/onboarding/Onboarding')
+    setOnboarding({ open: true, role })
+  }
   const closeOnboarding = () => setOnboarding({ open: false, role: null })
 
   const completeOnboarding = (newAccount) => {
@@ -54,9 +71,11 @@ export default function App() {
   // transition that never resolves would strand the user on the old surface.
   if (view === 'portal' && account) {
     return (
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-        <DashboardPage account={account} onExit={signOut} />
-      </motion.div>
+      <Suspense fallback={<div style={{ minHeight: '100vh', background: '#F8FAFC' }} />}>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+          <DashboardPage account={account} onExit={signOut} />
+        </motion.div>
+      </Suspense>
     )
   }
 
@@ -69,21 +88,31 @@ export default function App() {
           <RolePicker onPick={(role) => startOnboarding(role)} />
           <StatsRow />
           <Discover />
-          <HowItWorks />
-          <FeatureShowcase />
-          <BenefitsSection />
-          <Testimonials />
-          <HowItEarns />
+          <Suspense fallback={<FallbackBlock />}>
+            <HowItWorks />
+            <FeatureShowcase />
+            <BenefitsSection />
+            <Testimonials />
+            <HowItEarns />
+          </Suspense>
         </main>
-        <Footer onLogin={() => startOnboarding()} />
+        <Suspense fallback={null}>
+          <Footer onLogin={() => startOnboarding()} />
+        </Suspense>
       </motion.div>
 
-      <Onboarding
-        open={onboarding.open}
-        initialRole={onboarding.role}
-        onClose={closeOnboarding}
-        onComplete={completeOnboarding}
-      />
+      {/* Only mount Onboarding after it's asked for — it pulls in the
+          schools directory and a handful of step components. */}
+      {onboarding.open && (
+        <Suspense fallback={null}>
+          <Onboarding
+            open={onboarding.open}
+            initialRole={onboarding.role}
+            onClose={closeOnboarding}
+            onComplete={completeOnboarding}
+          />
+        </Suspense>
+      )}
     </>
   )
 }
