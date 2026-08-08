@@ -113,7 +113,7 @@ export default function Hero({ onLogin, onExplore }) {
       {/* Animated shader — sits behind the copy only. Constrained to the
           top of the hero so the ambient row and marquee below read on
           the plain night surface. */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[900px] overflow-hidden lg:h-[820px]">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[720px] overflow-hidden sm:h-[820px]">
         <ShaderBackground />
 
         {/* Vignette so the copy stays crisp when the nebula flares bright */}
