@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { ArrowUpRight, GraduationCap, Users, Presentation, Building2 } from 'lucide-react'
-import { Scribble } from '../shared/Blob3D'
+import { Scribble } from '../shared/Marks'
 import { Reveal, EASE } from '../shared/Motion'
 import { roleOptions } from '../../mockData'
 

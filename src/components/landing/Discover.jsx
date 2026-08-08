@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import Blob3D, { StarScribble } from '../shared/Blob3D'
+import { StarScribble } from '../shared/Marks'
 import { Reveal, Parallax, EASE } from '../shared/Motion'
 import { discoverPoints } from '../../mockData'
 
@@ -11,8 +11,6 @@ export default function Discover() {
   return (
     <section className="relative overflow-hidden bg-bone py-24 text-night lg:py-36">
       <StarScribble color="#FACC15" size={130} className="absolute left-[6%] top-[42%] hidden opacity-90 lg:block" />
-      <Blob3D shape="gem" hex="#22D3EE" size={200} rotate={-14} float className="absolute -right-8 top-12 hidden lg:block" />
-      <Blob3D shape="pebble" hex="#1E88F5" size={110} rotate={22} float delay={1.4} className="absolute bottom-16 left-[-3%] hidden opacity-90 xl:block" />
 
       <div className="relative mx-auto max-w-shell px-4 sm:px-6 lg:px-10">
         <Reveal className="max-w-3xl">

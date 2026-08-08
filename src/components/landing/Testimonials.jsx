@@ -1,14 +1,12 @@
 import { motion } from 'framer-motion'
 import { Quote } from 'lucide-react'
-import Blob3D, { Scribble, StarScribble } from '../shared/Blob3D'
+import { Scribble, StarScribble } from '../shared/Marks'
 import { Reveal, EASE } from '../shared/Motion'
 import { testimonials } from '../../mockData'
 
 export default function Testimonials() {
   return (
     <section id="testimonials" className="relative overflow-hidden bg-bone text-night">
-      <Blob3D shape="pebble" hex="#F472B6" size={150} rotate={-20} float className="absolute -left-8 top-20 hidden lg:block" />
-      <Blob3D shape="gem" hex="#A3E635" size={120} rotate={18} float delay={1.3} className="absolute -right-4 bottom-28 hidden lg:block" />
       <StarScribble color="#FACC15" size={80} className="absolute left-[12%] bottom-16 hidden opacity-80 xl:block" />
 
       <div className="relative mx-auto max-w-shell px-4 py-24 sm:px-6 lg:px-10 lg:py-32">
@@ -53,7 +51,6 @@ export default function Testimonials() {
                 >
                   {t.role}
                 </span>
-                <Blob3D shape={i % 2 === 0 ? 'droplet' : 'torus'} hex={t.accent} size={46} rotate={-10} />
               </div>
 
               <Quote size={24} strokeWidth={2} className="relative mt-7 text-night/15" />

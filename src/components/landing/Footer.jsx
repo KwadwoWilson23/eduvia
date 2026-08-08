@@ -1,6 +1,6 @@
 import { Facebook, Linkedin, Instagram, Youtube, Mail, Phone, ArrowUpRight } from 'lucide-react'
 import Logo from '../shared/Logo'
-import Blob3D, { Scribble } from '../shared/Blob3D'
+import { Scribble } from '../shared/Marks'
 import { Reveal } from '../shared/Motion'
 import { brand, footerColumns } from '../../mockData'
 
@@ -22,8 +22,6 @@ export default function Footer({ onLogin }) {
       <div className="relative mx-auto max-w-shell px-4 pt-24 sm:px-6 lg:px-10 lg:pt-32">
         <Reveal>
           <div className="relative overflow-hidden rounded-5xl border border-white/10 bg-white/[0.04] px-6 py-16 text-center sm:px-12 lg:px-16 lg:py-20">
-            <Blob3D shape="pebble" hex="#1E88F5" size={130} rotate={-18} float className="absolute -left-6 -top-6 hidden lg:block" />
-            <Blob3D shape="gem" hex="#22D3EE" size={110} rotate={22} float delay={1.4} className="absolute -bottom-6 -right-4 hidden lg:block" />
 
             <h2 className="mx-auto max-w-2xl font-heading text-3xl font-extrabold leading-[1.1] tracking-tightest sm:text-4xl lg:text-[56px]">
               <span className="word-soft">Ready when</span>{' '}

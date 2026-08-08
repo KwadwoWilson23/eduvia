@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import Blob3D, { Scribble } from '../shared/Blob3D'
+import { Scribble } from '../shared/Marks'
 import { EASE } from '../shared/Motion'
 import { benefitPills } from '../../mockData'
 
@@ -46,8 +46,6 @@ export default function BenefitsSection() {
       </div>
 
       <motion.div style={{ y: shapesY }} aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <Blob3D shape="torus" hex="#1E88F5" size={180} rotate={-16} float className="absolute -left-12 top-[18%] hidden lg:block" />
-        <Blob3D shape="droplet" hex="#22D3EE" size={140} rotate={14} float delay={1.6} className="absolute -right-8 bottom-[18%] hidden lg:block" />
       </motion.div>
 
       <div className="relative mx-auto max-w-shell px-4 py-24 sm:px-6 lg:px-10 lg:py-32">

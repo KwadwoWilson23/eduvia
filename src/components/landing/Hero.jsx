@@ -1,89 +1,139 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { ArrowUpRight, Video, Mic } from 'lucide-react'
-import Blob3D, { Scribble, Squiggle } from '../shared/Blob3D'
+import { ArrowUpRight, Play, TrendingUp, CalendarCheck, Wallet } from 'lucide-react'
+import { Scribble, Squiggle } from '../shared/Marks'
 import { SplitWords, RotatingWord, EASE } from '../shared/Motion'
-import { navLinks, heroCards } from '../../mockData'
+import { LineChart, BarChart, ProgressBar } from '../shared/Charts'
+import { roleOptions, analyticsPreview } from '../../mockData'
 
 const rise = {
   hidden: { opacity: 0, y: 26 },
   show: (d = 0) => ({ opacity: 1, y: 0, transition: { duration: 0.85, delay: d, ease: EASE } }),
 }
 
-/** Small floating "someone is on the call" card. */
-function CallCard({ card, className, delay }) {
+/* ------------------------------------------------------------------ *
+ * Product preview — a slice of the real portal, tilted under the copy
+ * ------------------------------------------------------------------ */
+
+function AppPreview() {
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.7, delay, ease: EASE }}
-      className={`absolute ${className}`}
-    >
-      <motion.div
-        animate={{ y: [0, -12, 0, 9, 0] }}
-        transition={{ duration: 11 + delay * 4, repeat: Infinity, ease: 'easeInOut' }}
-        className="w-[136px] overflow-hidden rounded-2xl border border-white/15 bg-white/[0.07] p-1.5 backdrop-blur-xl"
-      >
-        <div
-          className="relative flex h-20 items-end justify-center overflow-hidden rounded-xl"
-          style={{ backgroundColor: `${card.hex}22` }}
+    <div className="overflow-hidden rounded-3xl border border-white/12 bg-[#101014] shadow-pop">
+      {/* Window chrome */}
+      <div className="flex items-center gap-2 border-b border-white/8 px-4 py-3">
+        <span className="flex gap-1.5">
+          {['#F97316', '#FACC15', '#A3E635'].map((hex) => (
+            <span key={hex} className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: hex }} />
+          ))}
+        </span>
+        <span className="ml-3 rounded-full bg-white/[0.06] px-3 py-1 text-[10px] font-medium text-white/40">
+          eduvia.app / dashboard
+        </span>
+      </div>
+
+      <div className="grid gap-3 p-4 sm:grid-cols-3 sm:p-5">
+        {/* KPI column */}
+        <div className="space-y-3">
+          {[
+            { label: 'Attendance', value: '96%', hex: '#A3E635', Icon: CalendarCheck },
+            { label: 'Avg grade', value: '87%', hex: '#1E88F5', Icon: TrendingUp },
+            { label: 'Fees cleared', value: '92%', hex: '#F97316', Icon: Wallet },
+          ].map((kpi, i) => (
+            <motion.div
+              key={kpi.label}
+              initial={{ opacity: 0, x: -14 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 1.15 + i * 0.12, ease: EASE }}
+              className="rounded-2xl border border-white/8 bg-white/[0.04] p-3.5"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-white/35">{kpi.label}</span>
+                <kpi.Icon size={13} strokeWidth={2} style={{ color: kpi.hex }} />
+              </div>
+              <div className="mt-2 font-heading text-2xl font-extrabold tracking-tightest">{kpi.value}</div>
+              <ProgressBar
+                value={parseInt(kpi.value, 10)}
+                color={kpi.hex}
+                thickness={4}
+                delay={1.3 + i * 0.12}
+                className="mt-2.5 bg-white/10"
+              />
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Charts */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 1.3, ease: EASE }}
+          className="rounded-2xl border border-white/8 bg-white/[0.04] p-4 sm:col-span-2"
         >
-          {/* Abstract stand-in for a webcam feed */}
-          <div className="absolute left-1/2 top-3 h-7 w-7 -translate-x-1/2 rounded-full" style={{ backgroundColor: card.hex }} />
-          <div className="h-9 w-16 rounded-t-full" style={{ backgroundColor: card.hex, opacity: 0.85 }} />
-          <div className="absolute right-1.5 top-1.5 flex gap-1">
-            <Mic size={9} strokeWidth={2.5} className="text-white/70" />
-            <Video size={9} strokeWidth={2.5} className="text-white/70" />
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-white/35">
+              Cohort performance
+            </span>
+            <span className="rounded-full bg-lime/15 px-2.5 py-0.5 text-[10px] font-bold text-lime">+4.2</span>
           </div>
-        </div>
-        <div className="px-1.5 pb-1 pt-2">
-          <div className="text-[10px] font-bold leading-tight">{card.name}</div>
-          <div className="mt-0.5 text-[9px] leading-tight text-white/45">{card.caption}</div>
-        </div>
-      </motion.div>
-    </motion.div>
+
+          <LineChart values={[62, 71, 68, 79, 74, 83, 87, 84, 91]} height={104} color="#22D3EE" />
+
+          <div className="mt-3 border-t border-white/8 pt-3">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-white/35">
+              Attendance · 6 weeks
+            </span>
+            <BarChart
+              data={analyticsPreview.attendanceTrend}
+              height={72}
+              showValues={false}
+              highlightAbove={94}
+              color="#1E88F5"
+              mutedColor="rgba(255,255,255,0.12)"
+            />
+          </div>
+        </motion.div>
+      </div>
+    </div>
   )
 }
+
+/* ------------------------------------------------------------------ *
+ * Hero
+ * ------------------------------------------------------------------ */
 
 export default function Hero({ onLogin, onExplore }) {
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, 120])
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0])
-  const shapesY = useTransform(scrollYProgress, [0, 1], [0, -70])
-
-  const scrollTo = (href) => document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
+  const copyY = useTransform(scrollYProgress, [0, 1], [0, 90])
+  const copyOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
 
   return (
-    <section id="top" ref={ref} className="relative overflow-hidden bg-night pb-32 pt-10 lg:pb-40">
+    <section id="top" ref={ref} className="relative overflow-hidden bg-night pb-24 lg:pb-32">
       {/* Colour wash */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <div className="aurora -left-32 top-10 h-[520px] w-[520px] animate-drift bg-azure/25" />
-        <div className="aurora -right-24 top-1/4 h-[460px] w-[460px] animate-drift-slow bg-aqua/20" />
-        <div className="aurora bottom-0 left-1/3 h-[420px] w-[420px] animate-drift bg-tangerine/15" />
+        <div className="aurora left-1/2 top-[-18%] h-[620px] w-[820px] -translate-x-1/2 bg-azure/20" />
+        <div className="aurora -left-24 top-1/3 h-[420px] w-[420px] animate-drift-slow bg-aqua/12" />
+        <div className="aurora -right-20 top-1/4 h-[400px] w-[400px] animate-drift bg-tangerine/10" />
       </div>
 
-      {/* Glossy 3D shapes */}
-      <motion.div style={{ y: shapesY }} aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <Blob3D shape="pebble" hex="#1E88F5" size={210} rotate={-18} float className="absolute right-[3%] top-[9%] hidden lg:block" />
-        <Blob3D shape="torus" hex="#F97316" size={150} rotate={12} float delay={1.2} className="absolute left-[2%] top-[48%] hidden lg:block" />
-        <Blob3D shape="droplet" hex="#A3E635" size={120} rotate={-8} float delay={2.1} className="absolute bottom-[10%] right-[9%] hidden xl:block" />
-        <Blob3D shape="gem" hex="#22D3EE" size={104} rotate={20} float delay={0.6} className="absolute left-[8%] top-[16%] hidden xl:block" />
-        <Blob3D shape="pebble" hex="#F472B6" size={78} rotate={30} float delay={1.7} className="absolute bottom-[20%] left-[20%] hidden 2xl:block" />
-      </motion.div>
-
-      {/* Floating call cards */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 hidden xl:block">
-        <CallCard card={heroCards[0]} className="left-[13%] top-[30%]" delay={0.9} />
-        <CallCard card={heroCards[1]} className="right-[14%] bottom-[22%]" delay={1.2} />
-      </div>
+      {/* Fine grid, fading out downwards */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-[0.045]"
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, #FFF 1px, transparent 1px), linear-gradient(to bottom, #FFF 1px, transparent 1px)',
+          backgroundSize: '64px 64px',
+          maskImage: 'linear-gradient(to bottom, #000 0%, transparent 78%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, #000 0%, transparent 78%)',
+        }}
+      />
 
       <motion.div
-        style={{ y: contentY, opacity: contentOpacity }}
-        className="relative mx-auto max-w-shell px-4 pt-16 text-center sm:px-6 lg:px-10 lg:pt-24"
+        style={{ y: copyY, opacity: copyOpacity }}
+        className="relative mx-auto max-w-shell px-4 pt-20 text-center sm:px-6 lg:px-10 lg:pt-28"
       >
-        <motion.div variants={rise} initial="hidden" animate="show" custom={0} className="mb-10 flex justify-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-[13px] font-medium text-white/70 backdrop-blur-xl">
+        <motion.div variants={rise} initial="hidden" animate="show" custom={0} className="mb-9 flex justify-center">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.05] px-4 py-2 text-[13px] font-medium text-white/65 backdrop-blur-xl">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-lime opacity-70" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-lime" />
@@ -92,17 +142,22 @@ export default function Hero({ onLogin, onExplore }) {
           </span>
         </motion.div>
 
-        <h1 className="mx-auto max-w-4xl font-heading text-[44px] font-extrabold leading-[1.02] tracking-tightest sm:text-7xl lg:text-[92px]">
+        <h1 className="mx-auto max-w-5xl font-heading text-[46px] font-extrabold leading-[1.0] tracking-tightest sm:text-7xl lg:text-[96px]">
+          <SplitWords text="Unlock the" delay={0.15} />{' '}
           <span className="relative inline-block">
-            <SplitWords text="Unlock" delay={0.15} />
-            <Scribble color="#FFFFFF" width={230} className="absolute -bottom-1 left-0 w-full" delay={0.9} />
-          </span>{' '}
-          <SplitWords text="the future" delay={0.3} />
+            <SplitWords text="future" delay={0.35} />
+            <Scribble color="#1E88F5" width={210} className="absolute -bottom-2 left-0 w-full" delay={0.95} />
+          </span>
           <br />
           <SplitWords text="of" delay={0.5} />{' '}
           <span className="relative inline-block">
-            <SplitWords text="education" delay={0.6} />
-            <Squiggle color="#F472B6" width={190} className="absolute -bottom-4 left-1/2 w-[80%] -translate-x-1/2" delay={1.15} />
+            <SplitWords text="education" delay={0.58} />
+            <Squiggle
+              color="#22D3EE"
+              width={200}
+              className="absolute -bottom-5 left-1/2 w-[78%] -translate-x-1/2"
+              delay={1.2}
+            />
           </span>
         </h1>
 
@@ -111,7 +166,7 @@ export default function Hero({ onLogin, onExplore }) {
           initial="hidden"
           animate="show"
           custom={0.55}
-          className="mx-auto mt-12 max-w-xl text-base leading-8 text-white/50 sm:text-lg"
+          className="mx-auto mt-14 max-w-xl text-base leading-8 text-white/50 sm:text-lg"
         >
           One platform for{' '}
           <RotatingWord
@@ -126,7 +181,7 @@ export default function Hero({ onLogin, onExplore }) {
           variants={rise}
           initial="hidden"
           animate="show"
-          custom={0.7}
+          custom={0.68}
           className="mt-11 flex flex-col items-center justify-center gap-3 sm:flex-row"
         >
           <button onClick={onLogin} className="btn-light group w-full px-8 py-4 text-[15px] sm:w-auto">
@@ -137,29 +192,44 @@ export default function Hero({ onLogin, onExplore }) {
               className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
             />
           </button>
-          <button onClick={onExplore} className="btn-ghost w-full px-8 py-4 text-[15px] sm:w-auto">
+          <button onClick={onExplore} className="btn-ghost group w-full px-8 py-4 text-[15px] sm:w-auto">
+            <Play size={15} strokeWidth={2.5} className="transition-transform duration-300 group-hover:scale-110" />
             See how it works
           </button>
         </motion.div>
+
+        {/* Who it's for */}
+        <motion.div
+          variants={rise}
+          initial="hidden"
+          animate="show"
+          custom={0.8}
+          className="mt-12 flex flex-wrap items-center justify-center gap-x-7 gap-y-3"
+        >
+          {roleOptions.map((role) => (
+            <span key={role.id} className="flex items-center gap-2 text-xs font-semibold text-white/35">
+              <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: role.hex }} />
+              {role.label}s
+            </span>
+          ))}
+        </motion.div>
       </motion.div>
 
-      {/* Anchored nav pill, as in the reference */}
+      {/* Product preview */}
       <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, delay: 1.3, ease: EASE }}
-        className="relative mt-20 flex justify-center px-4 lg:mt-28"
+        initial={{ opacity: 0, y: 70, rotateX: 14, scale: 0.96 }}
+        animate={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
+        transition={{ duration: 1.1, delay: 0.95, ease: EASE }}
+        style={{ perspective: 1400 }}
+        className="relative mx-auto mt-20 max-w-4xl px-4 sm:px-6 lg:mt-24 lg:px-10"
       >
-        <div className="flex max-w-full items-center gap-1 overflow-x-auto rounded-full border border-white/12 bg-white/[0.07] p-1.5 backdrop-blur-2xl no-scrollbar">
-          {navLinks.map((link) => (
-            <button
-              key={link.label}
-              onClick={() => scrollTo(link.href)}
-              className="shrink-0 rounded-full px-5 py-2.5 text-[13px] font-semibold text-white/60 transition-colors hover:bg-white/10 hover:text-white"
-            >
-              {link.label}
-            </button>
-          ))}
+        {/* Glow pooled beneath the panel */}
+        <div
+          aria-hidden="true"
+          className="aurora left-1/2 top-10 h-[320px] w-[80%] -translate-x-1/2 bg-azure/25"
+        />
+        <div className="relative">
+          <AppPreview />
         </div>
       </motion.div>
     </section>

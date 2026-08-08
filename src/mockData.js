@@ -159,11 +159,6 @@ export const populationBands = [
  * LANDING — HERO & STATS
  * ------------------------------------------------------------------ */
 
-export const heroCards = [
-  { id: 'hc1', name: 'Ms. Adjei', caption: 'Good morning, students!', hex: '#A3E635' },
-  { id: 'hc2', name: 'Kwame O.', caption: 'Joining from Kumasi', hex: '#22D3EE' },
-]
-
 export const heroBadges = [
   { label: 'Live now · SHS 3 Physics', tone: 'azure' },
   { label: 'Term reports published', tone: 'lime' },

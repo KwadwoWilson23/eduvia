@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { Play, Pause, Send, Users, TrendingUp, Maximize2 } from 'lucide-react'
 import Pill from '../shared/Pill'
 import { BarChart, DistributionBar, ProgressBar } from '../shared/Charts'
-import Blob3D, { Scribble, StarScribble } from '../shared/Blob3D'
+import { Scribble, StarScribble } from '../shared/Marks'
 import { Reveal, EASE } from '../shared/Motion'
 import { analyticsPreview, homeworkPreview, videoPreview, statusTone } from '../../mockData'
 
@@ -275,8 +275,6 @@ function VideoMockup() {
 export default function FeatureShowcase() {
   return (
     <section id="features" className="relative overflow-hidden bg-bone text-night">
-      <Blob3D shape="torus" hex="#F97316" size={170} rotate={16} float className="absolute -left-10 top-24 hidden lg:block" />
-      <Blob3D shape="droplet" hex="#A3E635" size={130} rotate={-12} float delay={1.5} className="absolute -right-6 bottom-24 hidden lg:block" />
       <StarScribble color="#1E88F5" size={90} className="absolute right-[8%] top-16 hidden opacity-80 xl:block" />
 
       <div className="relative mx-auto max-w-shell px-4 py-24 sm:px-6 lg:px-10 lg:py-32">
