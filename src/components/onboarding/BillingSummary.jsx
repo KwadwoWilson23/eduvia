@@ -12,6 +12,7 @@ export default function BillingSummary({ school, population, pricing }) {
   const students = bandCentre[population] || 500
   const termCharge = students * pricing.perStudentPerTerm
   const currency = pricing.currency || 'GHS'
+  const paymentRate = `${pricing.paymentRatePercent}%`
 
   const money = (n) => `${currency} ${n.toLocaleString('en-US')}`
 
@@ -26,7 +27,7 @@ export default function BillingSummary({ school, population, pricing }) {
       <div className="mt-8 grid gap-3 sm:grid-cols-3">
         {[
           { Icon: Users, tint: '#1E88F5', kicker: 'You (proprietor)', body: `${money(pricing.perStudentPerTerm)} per student, per term` },
-          { Icon: Wallet, tint: '#F97316', kicker: 'Parents', body: `School fee + ${money(pricing.parentProcessingFee)} processing per payment` },
+          { Icon: Wallet, tint: '#F97316', kicker: 'Parents', body: `School fee + ${paymentRate} checkout fee when paid online` },
           { Icon: PiggyBank, tint: '#A3E635', kicker: 'Teachers', body: 'Free — access is via your invite code' },
         ].map((row, i) => (
           <motion.div
@@ -67,7 +68,7 @@ export default function BillingSummary({ school, population, pricing }) {
       </div>
 
       <ul className="mt-6 space-y-2 text-xs leading-5 text-white/50">
-        <li className="flex gap-2"><Check size={13} strokeWidth={2.5} className="mt-0.5 shrink-0 text-white/40" />Teachers you invite pay nothing; parents pay per child.</li>
+        <li className="flex gap-2"><Check size={13} strokeWidth={2.5} className="mt-0.5 shrink-0 text-white/40" />Teachers you invite pay nothing; parents only pay their school fees.</li>
         <li className="flex gap-2"><Check size={13} strokeWidth={2.5} className="mt-0.5 shrink-0 text-white/40" />Grades lock for students whose parents haven't paid the term fee.</li>
         <li className="flex gap-2"><Check size={13} strokeWidth={2.5} className="mt-0.5 shrink-0 text-white/40" />Cancel at any time — your data stays with the school.</li>
       </ul>

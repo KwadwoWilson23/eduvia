@@ -12,13 +12,42 @@ const icons = {
   calendar: Calendar,
 }
 
-export default function Sidebar({ account, active, onSelect, onExit, primaryAction }) {
-  const role = roleOptions.find((r) => r.id === account?.role)
+const navLabels = {
+  proprietor: {
+    courses: 'Programmes',
+    assignments: 'Fee Arrears',
+    grades: 'Reports',
+    schedule: 'Timetable',
+  },
+  teacher: {
+    courses: 'Classes',
+    assignments: 'Submissions',
+    grades: 'Gradebook',
+    schedule: 'Timetable',
+  },
+  parent: {
+    courses: 'Children',
+    assignments: 'Fees',
+    grades: 'Grades',
+    schedule: 'Timetable',
+  },
+}
+
+const detailForRole = (account, roleId) => {
+  if (roleId === 'student') return labelFor('programme', account?.programme)
+  if (roleId === 'teacher') return account?.subject || labelFor('division', account?.division)
+  if (roleId === 'parent') return account?.childName ? `Linked to ${account.childName}` : 'Family view'
+  if (roleId === 'proprietor') return account?.schoolKind ? labelFor('schoolKind', account.schoolKind) : 'School operations'
+  return ''
+}
+
+export default function Sidebar({ account, role: activeRole, active, onSelect, onExit, primaryAction }) {
+  const roleId = activeRole || account?.role
+  const role = roleOptions.find((r) => r.id === roleId)
 
   // The most useful second line varies by role: a programme for a student,
   // a subject for a teacher, the division otherwise.
-  const detail =
-    labelFor('programme', account?.programme) || account?.subject || labelFor('division', account?.division) || ''
+  const detail = detailForRole(account, roleId)
 
   return (
     <aside className="hidden w-[268px] shrink-0 flex-col border-r border-white/60 bg-white/55 backdrop-blur-2xl lg:flex">
@@ -87,7 +116,7 @@ export default function Sidebar({ account, active, onSelect, onExit, primaryActi
               )}
               <Icon size={19} strokeWidth={2} className={`relative z-10 ${isActive ? 'text-white' : 'text-mute'}`} />
               <span className={`relative z-10 ${isActive ? 'font-semibold text-white' : 'text-ink'}`}>
-                {navItem.label}
+                {navLabels[roleId]?.[navItem.id] || navItem.label}
               </span>
             </button>
           )

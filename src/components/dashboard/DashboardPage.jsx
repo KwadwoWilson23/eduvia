@@ -43,6 +43,7 @@ export default function DashboardPage({ account, onExit }) {
 
       <Sidebar
         account={account}
+        role={role}
         active={navItem}
         onSelect={setNavItem}
         onExit={onExit}

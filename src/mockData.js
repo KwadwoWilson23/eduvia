@@ -338,11 +338,47 @@ export const sidebarNav = [
 
 export const adminView = {
   title: 'Campus Overview',
-  subtitle: 'Key indicators for the current term.',
+  subtitle: 'What is happening on campus right now.',
   kpis: [
-    { id: 'fees', label: 'Term Fees Collected', value: '$1.86M', delta: '92% of expected', trend: 'up', icon: 'money' },
-    { id: 'enrollment', label: 'Active Enrolment', value: '1,240', delta: '+84 since last term', trend: 'up', icon: 'users' },
-    { id: 'staff', label: 'Staff Performance Index', value: '84%', delta: 'Stable retention', trend: 'flat', icon: 'staff' },
+    { id: 'staffToday', label: 'Staff Present Today', value: '62 / 68', delta: '3 late · 3 absent', trend: 'flat', icon: 'staff' },
+    { id: 'studentsIn', label: 'Students in Class', value: '1,187', delta: 'of 1,240 · 96%', trend: 'up', icon: 'users' },
+    { id: 'arrears', label: 'Fee Arrears', value: '$48,200', delta: '84 households owing', trend: 'down', icon: 'money' },
+    { id: 'risk', label: 'At-Risk Students', value: '11', delta: 'flagged this week', trend: 'flat', icon: 'alert' },
+  ],
+  staffToday: {
+    present: 62,
+    late: 3,
+    absent: 3,
+    total: 68,
+    list: [
+      { id: 'st1', name: 'Dr. Selina Owusu', subject: 'Physics · SHS 3', status: 'present', arrivedAt: '07:12' },
+      { id: 'st2', name: 'Mr. Daniel Roberts', subject: 'Core Maths · SHS 2B', status: 'present', arrivedAt: '07:04' },
+      { id: 'st3', name: 'Mrs. Ada Nwosu', subject: 'Form Tutor · SHS 1', status: 'present', arrivedAt: '06:58' },
+      { id: 'st4', name: 'Ms. Hana Lee', subject: 'Chemistry · SHS 2', status: 'late', arrivedAt: '08:22' },
+      { id: 'st5', name: 'Mr. Victor Silva', subject: 'PE · Cross-year', status: 'late', arrivedAt: '08:14' },
+      { id: 'st6', name: 'Mr. Kwame Antwi', subject: 'ICT · SHS 3', status: 'absent', arrivedAt: null },
+      { id: 'st7', name: 'Ms. Charity Adjei', subject: 'Literature · SHS 3', status: 'absent', arrivedAt: null },
+    ],
+  },
+  liveTimetable: [
+    { id: 'lt1', period: '09:00 – 09:45', course: 'Physics · SHS 3A', teacher: 'Dr. S. Owusu', room: 'Lab B', status: 'live' },
+    { id: 'lt2', period: '09:00 – 09:45', course: 'Core Maths · SHS 2B', teacher: 'Mr. D. Roberts', room: 'Room 12', status: 'live' },
+    { id: 'lt3', period: '09:00 – 09:45', course: 'Chemistry · SHS 1C', teacher: 'Ms. H. Lee', room: 'Lab A', status: 'live' },
+    { id: 'lt4', period: '10:00 – 10:45', course: 'Business Mgmt · SHS 2', teacher: 'Mr. K. Boateng', room: 'Room 8', status: 'next' },
+    { id: 'lt5', period: '10:00 – 10:45', course: 'Literature · SHS 3', teacher: 'Ms. C. Adjei', room: 'Room 15', status: 'next' },
+  ],
+  arrears: [
+    { id: 'ar1', student: 'Kwesi Boadu', form: 'SHS 3 · Business', parent: 'Mrs. Akua Boadu', amount: '$1,240', days: 22, tone: 'rose' },
+    { id: 'ar2', student: 'Kojo Mensah', form: 'SHS 2 · Science', parent: 'Mrs. Elizabeth Mensah', amount: '$1,100', days: 18, tone: 'rose' },
+    { id: 'ar3', student: 'Efua Owusu', form: 'SHS 1 · Arts', parent: 'Mr. Kofi Owusu', amount: '$860', days: 12, tone: 'rose' },
+    { id: 'ar4', student: 'Ama Nkansah', form: 'SHS 3 · Science', parent: 'Mr. Samuel Nkansah', amount: '$620', days: 9, tone: 'amber' },
+    { id: 'ar5', student: 'Yaw Adjei', form: 'SHS 1 · Business', parent: 'Mrs. Grace Adjei', amount: '$450', days: 5, tone: 'amber' },
+  ],
+  atRisk: [
+    { id: 're1', name: 'Kwesi Boadu', form: 'SHS 3 · Business', reason: 'Attendance 62% · dropped 24pt', tone: 'rose' },
+    { id: 're2', name: 'Sofia Marchetti', form: 'SHS 2 · Science', reason: '3 assignments overdue', tone: 'amber' },
+    { id: 're3', name: 'Noah Okafor', form: 'SHS 3 · Science', reason: 'Term average −12pt', tone: 'amber' },
+    { id: 're4', name: 'Ama Nkansah', form: 'SHS 3 · Science', reason: '5 late marks in a row', tone: 'amber' },
   ],
   attendance: {
     title: 'Campus Attendance',
@@ -383,6 +419,25 @@ export const teacherView = {
     { id: 'qa2', label: 'Start Live Session', description: 'Launch the virtual classroom for SHS 2B.', icon: 'video' },
     { id: 'qa3', label: 'Grade Submissions', description: '11 submissions are waiting on your review.', icon: 'checkSquare' },
   ],
+  today: [
+    { id: 'td1', time: '09:00', course: 'Advanced Physics · SHS 3A', room: 'Lab B', students: 24, status: 'live' },
+    { id: 'td2', time: '10:00', course: 'Physics · SHS 2B', room: 'Room 14', students: 32, status: 'next' },
+    { id: 'td3', time: '13:00', course: 'Foundations · SHS 1C', room: 'Lab A', students: 28, status: 'later' },
+  ],
+  attendanceToday: {
+    className: 'SHS 3A · First period',
+    present: 22,
+    total: 24,
+    absent: [
+      { id: 'ab1', name: 'Sofia Marchetti', note: 'No note' },
+      { id: 'ab2', name: 'Noah Okafor', note: 'Sick leave — parent notified' },
+    ],
+  },
+  parentMessages: [
+    { id: 'pm1', parent: 'Mrs. Elizabeth Mensah', child: 'Kojo Mensah', initials: 'EM', preview: 'Kojo will miss tomorrow — hospital appointment.', time: '1h ago', unread: true },
+    { id: 'pm2', parent: 'Mr. Kofi Owusu', child: 'Efua Owusu', initials: 'KO', preview: "Can we discuss Efua's last quiz score?", time: '3h ago', unread: true },
+    { id: 'pm3', parent: 'Mrs. Rachel Kimura', child: 'Emma Thompson', initials: 'RK', preview: 'Thank you for the science fair support.', time: 'Yesterday', unread: false },
+  ],
   performance: { average: 87, activeStudents: 24, atRisk: 3, trend: [62, 71, 68, 79, 74, 83, 87, 84, 91] },
   gradebook: [
     { id: 'g1', student: 'Emma Thompson', initials: 'ET', assignment: 'Practical — Resonance Tube', submitted: '24 Jan, 10:30', status: 'Submitted', action: 'Grade' },
@@ -420,6 +475,11 @@ export const studentView = {
     { id: 'a2', text: 'Scored 91% on Thermodynamics Class Test', time: 'Yesterday' },
     { id: 'a3', text: 'Joined study group "Elective Maths — SHS 3B"', time: '22 Jan' },
   ],
+  notices: [
+    { id: 'sn1', from: 'School Office', title: 'Mid-term exam timetable posted', time: '2h ago', tone: 'brand' },
+    { id: 'sn2', from: 'Physics Dept', title: 'Lab session moved to Wednesday', time: 'Yesterday', tone: 'amber' },
+    { id: 'sn3', from: 'Sports', title: 'Inter-house football sign-up open', time: '2 days ago', tone: 'success' },
+  ],
 }
 
 /* ------------------------------------------------------------------ *
@@ -437,6 +497,11 @@ export const parentView = {
       initials: 'ET',
       attendance: { rate: 96, present: 21, total: 22 },
       fees: { amount: '$450', term: 'Term 2 fees', status: 'Due in 5 days', tone: 'rose' },
+      today: [
+        { id: 'ct1', time: '09:00', course: 'Core Mathematics', room: 'Room 12', status: 'live' },
+        { id: 'ct2', time: '10:00', course: 'Physics · Practical', room: 'Lab B', status: 'next' },
+        { id: 'ct3', time: '13:00', course: 'History', room: 'Room 6', status: 'later' },
+      ],
       grades: [
         { subject: 'Core Mathematics', item: 'Quadratics Class Test', grade: 'A-' },
         { subject: 'Physics', item: 'Practical Report', grade: 'B+' },
@@ -468,6 +533,11 @@ export const parentView = {
       initials: 'JT',
       attendance: { rate: 89, present: 19, total: 22 },
       fees: { amount: '$0', term: 'Term 2 fees', status: 'Paid in full', tone: 'success' },
+      today: [
+        { id: 'jt1', time: '09:00', course: 'Business Management', room: 'Room 8', status: 'live' },
+        { id: 'jt2', time: '11:00', course: 'Core Mathematics', room: 'Room 14', status: 'next' },
+        { id: 'jt3', time: '14:30', course: 'Visual Arts Studio', room: 'Art Studio', status: 'later' },
+      ],
       grades: [
         { subject: 'Business Management', item: 'Unit 4 Test', grade: 'B' },
         { subject: 'Core Mathematics', item: 'Indices Worksheet', grade: 'B-' },

@@ -1,9 +1,24 @@
 import { motion } from 'framer-motion'
-import { BookOpen, ClipboardList, Star, CalendarDays, Filter, Search } from 'lucide-react'
+import {
+  BookOpen,
+  ClipboardList,
+  Star,
+  CalendarDays,
+  Filter,
+  Search,
+  Users,
+  Wallet,
+  Radio,
+  MapPin,
+  Clock,
+  Bell,
+} from 'lucide-react'
 import Pill from '../shared/Pill'
 import { ProgressBar } from '../shared/Charts'
 import { DoodleUnderline } from '../shared/Doodles'
-import { studentView, teacherView, statusTone } from '../../mockData'
+import { labelFor } from '../onboarding/steps'
+import { adminView, parentView, studentView, teacherView, statusTone } from '../../mockData'
+import { hasFullAccess } from '../../lib/access'
 
 const EASE = [0.16, 1, 0.3, 1]
 
@@ -23,6 +38,27 @@ function PageHead({ title, subtitle, right = null }) {
       {right}
     </header>
   )
+}
+
+const initials = (name) =>
+  String(name || '')
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((word) => word[0])
+    .join('')
+    .toUpperCase() || 'ED'
+
+function childForAccount(account) {
+  if (!account?.childId) return parentView.children[0]
+
+  return {
+    ...parentView.children[0],
+    id: account.childId,
+    name: account.childName || parentView.children[0].name,
+    grade: labelFor('programme', account.childProgramme) || parentView.children[0].grade,
+    initials: initials(account.childName || parentView.children[0].name),
+  }
 }
 
 /* ------------------------------------------------------------------ *
@@ -109,11 +145,69 @@ export function CoursesPage({ role, account }) {
   }
 
   if (role === 'parent') {
-    // Parents see their child's courses, at a glance.
+    const child = childForAccount(account)
+    const children = [child, ...parentView.children.filter((c) => c.id !== child.id)]
+
     return (
       <div className="space-y-6">
-        <PageHead title="Courses" subtitle={`${account?.childName || 'Your child'}'s enrolments for the term.`} />
-        <CoursesGrid courses={studentView.courses} />
+        <PageHead title="Children" subtitle="Attendance, balances, and classes for the children linked to you." />
+        <div className="grid gap-4 lg:grid-cols-2">
+          {children.map((c, i) => (
+            <motion.article
+              key={c.id}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: i * 0.06, ease: EASE }}
+              whileHover={{ y: -5 }}
+              className="glass glass-hover rounded-3xl p-6 lg:p-7"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <span className="flex min-w-0 items-center gap-3">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-ink text-xs font-bold text-white">
+                    {c.initials}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block truncate font-heading text-xl font-extrabold tracking-tight">{c.name}</span>
+                    <span className="mt-0.5 block truncate text-xs text-mute">{c.grade}</span>
+                  </span>
+                </span>
+                <Pill tone={c.fees.tone}>{c.fees.status}</Pill>
+              </div>
+
+              <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                <div className="rounded-2xl border border-ink/[0.07] bg-white/40 p-4">
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-mute">
+                    <Users size={13} strokeWidth={2} /> Attendance
+                  </div>
+                  <div className="mt-3 font-heading text-3xl font-extrabold tracking-tightest">{c.attendance.rate}%</div>
+                  <ProgressBar value={c.attendance.rate} color={c.attendance.rate >= 95 ? '#10B981' : '#F59E0B'} className="mt-3" />
+                </div>
+                <div className="rounded-2xl border border-ink/[0.07] bg-white/40 p-4">
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-mute">
+                    <Wallet size={13} strokeWidth={2} /> Fee balance
+                  </div>
+                  <div className="mt-3 font-heading text-3xl font-extrabold tracking-tightest">{c.fees.amount}</div>
+                  <div className="mt-1 text-xs text-mute">{c.fees.term}</div>
+                </div>
+              </div>
+
+              <div className="mt-6 border-t border-ink/[0.08] pt-5">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-mute">Today</div>
+                <div className="mt-2 grid gap-2">
+                  {c.today.slice(0, 2).map((slot) => (
+                    <div key={slot.id} className="flex items-center justify-between gap-3 rounded-2xl bg-ink/[0.04] px-3.5 py-3">
+                      <span className="min-w-0">
+                        <span className="block truncate text-sm font-semibold">{slot.course}</span>
+                        <span className="mt-0.5 block truncate text-[11px] text-mute">{slot.room}</span>
+                      </span>
+                      <span className="shrink-0 text-xs font-semibold text-mute tabular-nums">{slot.time}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.article>
+          ))}
+        </div>
       </div>
     )
   }
@@ -148,19 +242,132 @@ const studentAssignments = [
 ]
 
 export function AssignmentsPage({ role, account }) {
+  if (role === 'proprietor') {
+    return (
+      <div className="space-y-6">
+        <PageHead
+          title="Fee Arrears"
+          subtitle={`${account?.school || 'Your school'} · Students and households that need follow-up.`}
+          right={
+            <button className="flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-xs font-bold uppercase tracking-wide text-white transition-colors hover:bg-brand">
+              <Wallet size={14} strokeWidth={2.5} /> Remind all
+            </button>
+          }
+        />
+
+        <motion.section
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: EASE }}
+          className="glass overflow-hidden rounded-4xl"
+        >
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[720px] text-left">
+              <thead>
+                <tr className="border-b border-ink/[0.07] bg-ink/[0.02]">
+                  {['Student', 'Class', 'Parent', 'Balance', 'Overdue', 'Action'].map((h) => (
+                    <th key={h} className="px-6 py-3.5 text-[11px] font-bold uppercase tracking-wider text-mute lg:px-7">
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {adminView.arrears.map((r) => (
+                  <tr key={r.id} className="border-b border-ink/[0.05] transition-colors last:border-0 hover:bg-brand/[0.04]">
+                    <td className="px-6 py-4 text-sm font-medium lg:px-7">{r.student}</td>
+                    <td className="px-6 py-4 text-sm text-mute lg:px-7">{r.form}</td>
+                    <td className="px-6 py-4 text-sm text-mute lg:px-7">{r.parent}</td>
+                    <td className="px-6 py-4 text-sm font-bold tabular-nums lg:px-7">{r.amount}</td>
+                    <td className="px-6 py-4 lg:px-7">
+                      <Pill tone={r.tone}>{r.days} days</Pill>
+                    </td>
+                    <td className="px-6 py-4 lg:px-7">
+                      <button className="text-sm font-semibold text-brand underline-offset-4 hover:underline">
+                        Send reminder
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </motion.section>
+      </div>
+    )
+  }
+
+  if (role === 'parent') {
+    const child = childForAccount(account)
+    const children = [child, ...parentView.children.filter((c) => c.id !== child.id)]
+
+    return (
+      <div className="space-y-6">
+        <PageHead title="Fees" subtitle={`Fee standing for ${account?.childName || 'your children'}.`} />
+
+        <motion.section
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: EASE }}
+          className="glass overflow-hidden rounded-4xl"
+        >
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[640px] text-left">
+              <thead>
+                <tr className="border-b border-ink/[0.07] bg-ink/[0.02]">
+                  {['Child', 'Class', 'Term', 'Balance', 'Status', 'Action'].map((h) => (
+                    <th key={h} className="px-6 py-3.5 text-[11px] font-bold uppercase tracking-wider text-mute lg:px-7">
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {children.map((c) => (
+                  <tr key={c.id} className="border-b border-ink/[0.05] transition-colors last:border-0 hover:bg-brand/[0.04]">
+                    <td className="px-6 py-4 lg:px-7">
+                      <div className="flex items-center gap-3">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink/[0.06] text-[10px] font-bold text-mute">
+                          {c.initials}
+                        </span>
+                        <span className="text-sm font-medium">{c.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-mute lg:px-7">{c.grade}</td>
+                    <td className="px-6 py-4 text-sm text-mute lg:px-7">{c.fees.term}</td>
+                    <td className="px-6 py-4 text-sm font-bold tabular-nums lg:px-7">{c.fees.amount}</td>
+                    <td className="px-6 py-4 lg:px-7">
+                      <Pill tone={c.fees.tone}>{c.fees.status}</Pill>
+                    </td>
+                    <td className="px-6 py-4 lg:px-7">
+                      <button
+                        disabled={c.fees.amount === '$0'}
+                        className="text-sm font-semibold text-brand underline-offset-4 hover:underline disabled:pointer-events-none disabled:text-mute"
+                      >
+                        {c.fees.amount === '$0' ? 'Cleared' : 'Pay now'}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </motion.section>
+      </div>
+    )
+  }
+
   const isTeacher = role === 'teacher'
   const rows = isTeacher ? teacherView.gradebook : studentAssignments
 
   return (
     <div className="space-y-6">
       <PageHead
-        title="Assignments"
+        title={isTeacher ? 'Submissions' : 'Assignments'}
         subtitle={
           isTeacher
             ? 'Submissions waiting on your review.'
-            : role === 'parent'
-              ? `Coursework for ${account?.childName || 'your child'}.`
-              : 'Everything due, in one place.'
+            : 'Everything due, in one place.'
         }
         right={
           <div className="flex items-center gap-2 rounded-full border border-ink/15 bg-white/70 px-3 py-2 text-xs font-semibold text-mute">
@@ -247,6 +454,163 @@ const studentGrades = [
 ]
 
 export function GradesPage({ role, account }) {
+  if (role === 'proprietor') {
+    return (
+      <div className="space-y-6">
+        <PageHead title="Reports" subtitle={`${account?.school || 'Your school'} · Attendance, risk, and programme performance.`} />
+
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
+          <motion.section
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: EASE }}
+            className="glass overflow-hidden rounded-4xl"
+          >
+            <div className="flex items-center gap-2.5 border-b border-ink/[0.07] px-6 py-5 lg:px-7">
+              <Bell size={17} strokeWidth={2} className="text-rose" />
+              <h2 className="font-heading text-lg font-extrabold tracking-tight">At-Risk Students</h2>
+              <Pill tone="rose" className="ml-auto px-2.5 py-0.5 text-[11px]">
+                {adminView.atRisk.length} flagged
+              </Pill>
+            </div>
+            <ul className="divide-y divide-ink/[0.06]">
+              {adminView.atRisk.map((r) => (
+                <li key={r.id} className="flex items-start gap-3 px-6 py-4 lg:px-7">
+                  <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${r.tone === 'rose' ? 'bg-rose' : 'bg-amber'}`} />
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-bold">{r.name}</span>
+                    <span className="mt-0.5 block text-xs text-mute">{r.form} · {r.reason}</span>
+                  </span>
+                  <button className="text-xs font-semibold text-brand underline-offset-4 hover:underline">Open</button>
+                </li>
+              ))}
+            </ul>
+          </motion.section>
+
+          <motion.section
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.08, ease: EASE }}
+            className="glass rounded-4xl p-6 lg:p-7"
+          >
+            <div className="flex items-center justify-between">
+              <h2 className="font-heading text-lg font-extrabold tracking-tight">{adminView.departments.title}</h2>
+              <Pill tone="neutral" className="px-3 py-0.5">{adminView.departments.badge}</Pill>
+            </div>
+            <div className="mt-6 grid gap-5 border-t border-ink/[0.07] pt-6 sm:grid-cols-2">
+              {adminView.departments.data.map((dept, i) => (
+                <div key={dept.label}>
+                  <div className="mb-2 flex items-baseline justify-between gap-3">
+                    <span className="truncate text-sm font-medium">{dept.label}</span>
+                    <span className={`shrink-0 text-sm font-bold ${dept.value >= 10 ? 'text-success' : 'text-mute'}`}>
+                      +{dept.value}%
+                    </span>
+                  </div>
+                  <ProgressBar
+                    value={(dept.value / 24) * 100}
+                    color={dept.value >= 10 ? '#10B981' : '#C7D2FE'}
+                    delay={i * 0.08}
+                  />
+                  <div className="mt-1.5 text-[11px] text-mute">{dept.students.toLocaleString()} enrolled</div>
+                </div>
+              ))}
+            </div>
+          </motion.section>
+        </div>
+      </div>
+    )
+  }
+
+  if (role === 'teacher') {
+    return (
+      <div className="space-y-6">
+        <PageHead
+          title="Gradebook"
+          subtitle={`${account?.subject || 'Your classes'} · marks, late work, and students needing review.`}
+        />
+
+        <div className="grid gap-4 lg:grid-cols-3">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: EASE }}
+            className="glass rounded-3xl p-6 lg:p-7"
+          >
+            <div className="text-[11px] font-bold uppercase tracking-wider text-mute">Class average</div>
+            <div className="mt-4 font-heading text-6xl font-extrabold tracking-tightest">{teacherView.performance.average}%</div>
+            <div className="mt-3 text-sm text-mute">{teacherView.performance.atRisk} students need attention</div>
+            <ProgressBar value={teacherView.performance.average} color="#10B981" thickness={8} className="mt-5" />
+          </motion.div>
+
+          <motion.section
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.08, ease: EASE }}
+            className="glass overflow-hidden rounded-3xl lg:col-span-2"
+          >
+            <div className="border-b border-ink/[0.07] px-6 py-4 lg:px-7">
+              <h2 className="font-heading text-lg font-extrabold tracking-tight">Recent submissions</h2>
+            </div>
+            <ul className="divide-y divide-ink/[0.06]">
+              {teacherView.gradebook.map((row) => (
+                <li key={row.id} className="flex items-center gap-4 px-6 py-4 lg:px-7">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink/[0.06] text-[10px] font-bold text-mute">
+                    {row.initials}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-bold">{row.student}</span>
+                    <span className="mt-0.5 block truncate text-xs text-mute">{row.assignment}</span>
+                  </span>
+                  <Pill tone={statusTone[row.status]}>{row.status}{row.score ? ` · ${row.score}` : ''}</Pill>
+                </li>
+              ))}
+            </ul>
+          </motion.section>
+        </div>
+      </div>
+    )
+  }
+
+  if (role === 'parent') {
+    const child = childForAccount(account)
+    const unlocked = hasFullAccess(child)
+
+    return (
+      <div className="space-y-6">
+        <PageHead title="Grades" subtitle={`${child.name}'s recent marks and teacher feedback.`} />
+
+        <motion.section
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: EASE }}
+          className="glass relative overflow-hidden rounded-4xl"
+        >
+          <div className={`grid gap-4 p-6 lg:grid-cols-3 lg:p-7 ${!unlocked ? 'select-none blur-sm' : ''}`}>
+            {child.grades.map((g, i) => (
+              <article key={g.subject} className="rounded-3xl border border-ink/[0.07] bg-white/45 p-5">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-mute">{g.subject}</div>
+                <div className="mt-3 font-heading text-xl font-extrabold tracking-tight">{g.item}</div>
+                <div className="mt-5 flex h-12 w-12 items-center justify-center rounded-full bg-ink text-sm font-bold text-white">
+                  {g.grade}
+                </div>
+              </article>
+            ))}
+          </div>
+
+          {!unlocked && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-white/75 p-6 text-center backdrop-blur-md">
+              <Wallet size={22} strokeWidth={2} className="text-mute" />
+              <div className="text-sm font-bold">Grades unlock after fees are cleared</div>
+              <p className="max-w-xs text-xs leading-5 text-mute">
+                {child.name.split(' ')[0]} can still see their timetable while the parent account settles the balance.
+              </p>
+            </div>
+          )}
+        </motion.section>
+      </div>
+    )
+  }
+
   const term = role === 'teacher' ? 'Your class · Term 2 average' : role === 'parent' ? `${account?.childName || 'Your child'} · Term 2 average` : 'Your Term 2 average'
   const avg = 84
 
@@ -306,6 +670,110 @@ export function GradesPage({ role, account }) {
 const dotColors = { brand: '#1E88F5', rose: '#F43F5E', amber: '#F97316', ink: '#0F172A' }
 
 export function SchedulePage({ role, account }) {
+  if (role === 'proprietor') {
+    return (
+      <div className="space-y-6">
+        <PageHead
+          title="Timetable"
+          subtitle={`${account?.school || 'Your school'} · Classes currently running and the next periods due to start.`}
+          right={
+            <div className="flex items-center gap-2 rounded-full border border-ink/15 bg-white/70 px-3 py-2 text-xs font-semibold text-mute">
+              <Radio size={13} strokeWidth={2} /> Live now
+            </div>
+          }
+        />
+
+        <div className="grid gap-4 lg:grid-cols-2">
+          {adminView.liveTimetable.map((row, i) => (
+            <motion.article
+              key={row.id}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: i * 0.06, ease: EASE }}
+              className="glass flex items-center gap-4 rounded-3xl p-5"
+            >
+              <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${row.status === 'live' ? 'bg-brand text-white' : 'bg-ink/[0.06] text-mute'}`}>
+                {row.status === 'live' ? <Radio size={16} strokeWidth={2.5} /> : <Clock size={16} strokeWidth={2.5} />}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate font-heading text-lg font-extrabold tracking-tight">{row.course}</span>
+                <span className="mt-0.5 block truncate text-xs text-mute">{row.teacher} · {row.room}</span>
+              </span>
+              <span className="shrink-0 text-xs font-semibold text-mute tabular-nums">{row.period}</span>
+            </motion.article>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (role === 'teacher') {
+    return (
+      <div className="space-y-6">
+        <PageHead title="Timetable" subtitle="Your classes and duties today." />
+        <div className="grid gap-4 lg:grid-cols-3">
+          {teacherView.today.map((slot, i) => (
+            <motion.article
+              key={slot.id}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: i * 0.06, ease: EASE }}
+              whileHover={{ y: -5 }}
+              className="glass glass-hover rounded-3xl p-6 lg:p-7"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <Pill tone={slot.status === 'live' ? 'rose' : slot.status === 'next' ? 'brand' : 'neutral'}>
+                  {slot.status === 'live' ? 'Live' : slot.status === 'next' ? 'Next' : 'Later'}
+                </Pill>
+                <span className="text-xs font-semibold text-mute tabular-nums">{slot.time}</span>
+              </div>
+              <div className="mt-5 font-heading text-xl font-extrabold tracking-tight">{slot.course}</div>
+              <div className="mt-2 flex items-center gap-2 text-xs text-mute">
+                <MapPin size={13} strokeWidth={2} /> {slot.room}
+              </div>
+              <div className="mt-5 flex items-center gap-2 border-t border-ink/[0.08] pt-4 text-xs font-semibold text-mute">
+                <Users size={13} strokeWidth={2} /> {slot.students} students
+              </div>
+            </motion.article>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (role === 'parent') {
+    const child = childForAccount(account)
+
+    return (
+      <div className="space-y-6">
+        <PageHead title="Timetable" subtitle={`${child.name}'s classes today.`} />
+        <div className="grid gap-4 lg:grid-cols-3">
+          {child.today.map((slot, i) => (
+            <motion.article
+              key={slot.id}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: i * 0.06, ease: EASE }}
+              whileHover={{ y: -5 }}
+              className="glass glass-hover rounded-3xl p-6 lg:p-7"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <Pill tone={slot.status === 'live' ? 'rose' : slot.status === 'next' ? 'brand' : 'neutral'}>
+                  {slot.status === 'live' ? 'Live' : slot.status === 'next' ? 'Next' : 'Later'}
+                </Pill>
+                <span className="text-xs font-semibold text-mute tabular-nums">{slot.time}</span>
+              </div>
+              <div className="mt-5 font-heading text-xl font-extrabold tracking-tight">{slot.course}</div>
+              <div className="mt-2 flex items-center gap-2 text-xs text-mute">
+                <MapPin size={13} strokeWidth={2} /> {slot.room}
+              </div>
+            </motion.article>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
   const days = [
     { day: 'Mon', date: '3', items: studentView.schedule.slice(0, 2) },
     { day: 'Tue', date: '4', items: studentView.schedule.slice(2, 4) },

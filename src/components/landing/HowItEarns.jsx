@@ -5,6 +5,7 @@ import { Scribble } from '../shared/Marks'
 import { pricing } from '../../lib/access'
 
 const money = (n) => `${pricing.currency} ${n}`
+const rate = `${pricing.paymentRatePercent}%`
 
 const streams = [
   {
@@ -20,8 +21,8 @@ const streams = [
     Icon: Wallet,
     tint: '#F97316',
     role: 'Parents',
-    price: `School fee + ${money(pricing.parentProcessingFee)} processing`,
-    body: 'Pay term fees straight through the platform. The school keeps its fee, Eduvia takes the processing.',
+    price: `School fee + ${rate} checkout fee`,
+    body: 'Pay term fees straight through the platform. The school keeps the fee; Eduvia earns only when a payment is processed.',
   },
   {
     id: 'teacher',
@@ -52,8 +53,8 @@ export default function HowItEarns() {
             </span>
           </h2>
           <p className="mt-9 text-base leading-8 text-white/50">
-            Three simple streams. Proprietors subscribe, parents pay fees, teachers join by invite. No card is asked
-            for during sign-up.
+            Two clear revenue streams. Schools subscribe per enrolled student, and online fee payments carry a small
+            checkout fee. Teachers join by invite and do not pay.
           </p>
         </Reveal>
 

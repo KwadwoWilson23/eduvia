@@ -3,8 +3,8 @@
  *
  * How money moves on Eduvia (in-story):
  *   • Proprietors pay a per-student subscription each term.
- *   • Parents pay school fees through the platform; the school keeps the
- *     fee and Eduvia takes a small processing cut on top.
+ *   • Parents can pay school fees through the platform; the school keeps
+ *     the fee, while Eduvia earns a small checkout percentage.
  *   • Teachers join by invite code issued by the proprietor.
  *   • Students see full coursework only when their parent's fees are paid.
  *
@@ -62,7 +62,7 @@ export function mintProprietorCode(school) {
 export const pricing = {
   currency: 'GHS',
   perStudentPerTerm: 15,
-  parentProcessingFee: 2.5, // GHS on top of the school fee, per payment
+  paymentRatePercent: 1.5, // Optional checkout fee on school-fee payments.
   freeTrialTerms: 1,
 }
 

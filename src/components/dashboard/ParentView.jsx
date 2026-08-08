@@ -1,6 +1,18 @@
 import { useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { CalendarCheck, Wallet, Star, MessageSquare, ChevronDown, CornerUpLeft, Check, Lock } from 'lucide-react'
+import {
+  CalendarCheck,
+  Wallet,
+  Star,
+  MessageSquare,
+  ChevronDown,
+  CornerUpLeft,
+  Check,
+  Lock,
+  Clock,
+  MapPin,
+  Radio,
+} from 'lucide-react'
 import Pill from '../shared/Pill'
 import { ProgressBar } from '../shared/Charts'
 import { DoodleUnderline } from '../shared/Doodles'
@@ -217,6 +229,43 @@ export default function ParentView({ account }) {
             )}
           </motion.div>
         </div>
+
+        <section className="glass overflow-hidden rounded-4xl">
+          <div className="flex items-center gap-2.5 border-b border-ink/[0.07] px-6 py-5 lg:px-7">
+            <Clock size={17} strokeWidth={2} className="text-brand" />
+            <h2 className="font-heading text-lg font-extrabold tracking-tight">Today&apos;s Timetable</h2>
+            <Pill tone="neutral" className="ml-auto px-2.5 py-0.5 text-[11px]">
+              {child.today.length} periods
+            </Pill>
+          </div>
+
+          <div className="grid divide-y divide-ink/[0.06] md:grid-cols-3 md:divide-x md:divide-y-0">
+            {child.today.map((slot) => (
+              <article key={slot.id} className="p-5 lg:p-6">
+                <div className="flex items-center gap-2">
+                  {slot.status === 'live' ? (
+                    <Pill tone="rose" className="px-2 py-0 text-[10px]">
+                      <Radio size={10} strokeWidth={2.5} />
+                      LIVE
+                    </Pill>
+                  ) : (
+                    <Pill tone={slot.status === 'next' ? 'brand' : 'neutral'} className="px-2 py-0 text-[10px]">
+                      {slot.status === 'next' ? 'Next' : 'Later'}
+                    </Pill>
+                  )}
+                  <span className="text-xs font-semibold text-mute tabular-nums">{slot.time}</span>
+                </div>
+                <div className="mt-3 font-heading text-lg font-extrabold leading-snug tracking-tight">
+                  {slot.course}
+                </div>
+                <div className="mt-2 flex items-center gap-1 text-[11px] font-medium text-mute">
+                  <MapPin size={11} strokeWidth={2} />
+                  {slot.room}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
 
         {/* Teacher messages — also behind the fee gate */}
         <section className="glass relative overflow-hidden rounded-4xl">
